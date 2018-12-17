@@ -6,7 +6,6 @@ import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLEncoder;
-import java.util.HashMap;
 import java.util.Map;
 
 import com.alibaba.fastjson.JSONObject;
@@ -28,21 +27,6 @@ public class HttpUtil {
 	public static final Integer CONNECT_TIME_OUT = 120000;
 	
 	public static final Integer READ_TIME_OUT = 60000;
-	
-	public static void main(String[] args) throws Exception {
-		Map<String, Object> params = new HashMap<String, Object>();
-		params.put("password", "F3F1C26545D2424E5BBC7BF12A8F2DC6");
-		params.put("userNo", "00000000");
-		params.put("pageSize", 1);
-		params.put("pageNo", 1);
-		params.put("cityCode", 131);
-		String getUrl = "http://preics.boe.com/ics-web/auth/doLogin";
-		String u1 = "https://ssctest.boe.com/v1/mall-api/store/pageList";
-		HttpResponse getRes = HttpUtil.postUrlEncoded(getUrl, params);
-//		HttpResponse getRes1 = HttpUtil.postJson(u1, params);
-		System.out.println(getRes);
-	}
-	
 	
 	/**
 	 * http get请求
