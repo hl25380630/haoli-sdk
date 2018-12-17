@@ -5,16 +5,25 @@ import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.net.URLEncoder;
 import java.util.HashMap;
 import java.util.Map;
 
 import com.alibaba.fastjson.JSONObject;
 
+/**
+ * http 请求工具类，基于java原生包实现
+ * @author 李昊
+ */
 public class HttpUtil {
 	
 	public static final String CONTENT_TYPE_JSON = "application/json";
 	
+	public static final String CONTENT_TYPE_URL_ENCODED = "application/x-www-form-urlencoded";
+	
 	public static final String REQUEST_METHOD_POST = "POST";
+	
+	public static final String REQUEST_METHOD_GET = "GET";
 	
 	public static final Integer CONNECT_TIME_OUT = 120000;
 	
@@ -22,12 +31,63 @@ public class HttpUtil {
 	
 	public static void main(String[] args) throws Exception {
 		Map<String, Object> params = new HashMap<String, Object>();
-		params.put("pageSize", 5);
+		params.put("password", "F3F1C26545D2424E5BBC7BF12A8F2DC6");
+		params.put("userNo", "00000000");
+		params.put("pageSize", 1);
 		params.put("pageNo", 1);
 		params.put("cityCode", 131);
-		String url = "https://ssctest.boe.com/v1/mall-api/store/pageList";
-		HttpResponse res = HttpUtil.postJson(url, params);
-		System.out.println(res);
+		String getUrl = "http://preics.boe.com/ics-web/auth/doLogin";
+		String u1 = "https://ssctest.boe.com/v1/mall-api/store/pageList";
+		HttpResponse getRes = HttpUtil.postUrlEncoded(getUrl, params);
+//		HttpResponse getRes1 = HttpUtil.postJson(u1, params);
+		System.out.println(getRes);
+	}
+	
+	
+	/**
+	 * http get请求
+	 * @param url 请求链接
+	 * @param params 请求参数
+	 */
+	public static HttpResponse get(String url, Map<String, Object> params) throws Exception {
+		StringBuilder sb = new StringBuilder(url);
+		if(params != null && !params.isEmpty()) {
+			sb.append("?");
+			for (Map.Entry<String, Object> entry : params.entrySet()) {
+				if(entry.getValue() == null) {
+					continue;
+				}
+				String value = URLEncoder.encode(String.valueOf(entry.getValue()), "UTF-8");
+				sb.append(String.valueOf(entry.getKey())).append("=").append(value).append("&");
+			}
+			sb.deleteCharAt(sb.length() - 1);
+		}
+		String getUrl = sb.toString();
+		URL urlObj = new URL(getUrl);
+		HttpURLConnection con = (HttpURLConnection) urlObj.openConnection();
+		con.setDoInput(true);
+		con.setRequestMethod(REQUEST_METHOD_GET); 
+		con.setConnectTimeout(CONNECT_TIME_OUT);
+		con.setReadTimeout(READ_TIME_OUT);
+		con.connect();
+		BufferedReader br = new BufferedReader(new InputStreamReader(con.getInputStream(), "utf-8"));
+		StringBuilder responseSb = new StringBuilder();  
+	    String response = null;
+	    int responseCode = con.getResponseCode();
+	    if(responseCode >=200 && responseCode <300) {
+		    String line = null;
+		    while ((line = br.readLine()) != null) {  
+		    	responseSb.append(line + "\n");  
+		    }
+		    response = responseSb.toString();
+			br.close();
+	    }else {
+			response = responseSb.toString();
+	    }
+	    br.close();
+	    con.disconnect();
+	    HttpResponse httpResponse = new HttpResponse(responseCode,response);
+		return httpResponse;
 	}
 	
 	/**
@@ -41,7 +101,6 @@ public class HttpUtil {
 		con.setDoOutput(true);
 		con.setDoInput(true);
 		con.setRequestProperty("Content-Type", CONTENT_TYPE_JSON);
-		con.setRequestProperty("Accept", CONTENT_TYPE_JSON);
 		con.setRequestMethod(REQUEST_METHOD_POST); 
 		con.setConnectTimeout(CONNECT_TIME_OUT);
 		con.setReadTimeout(READ_TIME_OUT);
@@ -49,6 +108,58 @@ public class HttpUtil {
 		con.connect();
 		OutputStreamWriter outputStreamWriter = new OutputStreamWriter(con.getOutputStream());
 		outputStreamWriter.write(json);
+		outputStreamWriter.flush();
+		BufferedReader br = new BufferedReader(new InputStreamReader(con.getInputStream(), "utf-8"));
+		StringBuilder sb = new StringBuilder();  
+	    String response = null;
+	    int responseCode = con.getResponseCode();
+	    if(responseCode >=200 && responseCode <300) {
+		    String line = null;
+		    while ((line = br.readLine()) != null) {  
+		        sb.append(line + "\n");  
+		    }
+		    response = sb.toString();
+			br.close();
+	    }else {
+			response = sb.toString();
+	    }
+	    outputStreamWriter.close();
+	    br.close();
+	    con.disconnect();
+	    HttpResponse httpResponse = new HttpResponse(responseCode,response);
+		return httpResponse;
+	}
+	
+	
+	/**
+	 * http post请求，请求参数形式为url-encoded
+	 * @param url 请求链接地址
+	 * @param params 请求参数
+	 */
+	public static HttpResponse postUrlEncoded(String url, Map<String, Object> params) throws Exception {
+		URL urlObj = new URL(url);
+		HttpURLConnection con = (HttpURLConnection) urlObj.openConnection();
+		con.setDoOutput(true);
+		con.setDoInput(true);
+		con.setRequestProperty("Content-Type", CONTENT_TYPE_URL_ENCODED);
+		con.setRequestMethod(REQUEST_METHOD_POST); 
+		con.setConnectTimeout(CONNECT_TIME_OUT);
+		con.setReadTimeout(READ_TIME_OUT);
+		con.connect();
+		StringBuilder postParamBuilder = new StringBuilder();
+		OutputStreamWriter outputStreamWriter = new OutputStreamWriter(con.getOutputStream());
+		if(params != null && !params.isEmpty()) {
+			for (Map.Entry<String, Object> entry : params.entrySet()) {
+				if(entry.getValue() == null) {
+					continue;
+				}
+				String value = URLEncoder.encode(String.valueOf(entry.getValue()), "UTF-8");
+				postParamBuilder.append(String.valueOf(entry.getKey())).append("=").append(value).append("&");
+			}
+			postParamBuilder.deleteCharAt(postParamBuilder.length() - 1);
+		}
+		String postParam = postParamBuilder.toString();
+		outputStreamWriter.write(postParam);
 		outputStreamWriter.flush();
 		BufferedReader br = new BufferedReader(new InputStreamReader(con.getInputStream(), "utf-8"));
 		StringBuilder sb = new StringBuilder();  
@@ -106,10 +217,10 @@ public class HttpUtil {
 				return false;
 			}
 		}
-		
+
 		@Override
-		public String toString(){
-			return "statusCode:" + this.statusCode + ",body:" + this.body;
+		public String toString() {
+			return "{\n\tstatusCode:" + statusCode + ",\n\tbody:" + body + "}";
 		}
 		
 	}
