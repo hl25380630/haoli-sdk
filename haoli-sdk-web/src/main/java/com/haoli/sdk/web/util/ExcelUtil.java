@@ -15,7 +15,7 @@ import org.jxls.util.JxlsHelper;
 import org.springframework.stereotype.Component;
 
 @Component
-public class ExcelSupport {
+public class ExcelUtil {
 	
 	public void exportExcel(String template, OutputStream os, Map<String, Object> varMap) throws IOException {
 		InputStream templateStream = this.getClass().getResourceAsStream(template);
@@ -24,7 +24,7 @@ public class ExcelSupport {
 		Transformer transformer  = jxlsHelper.createTransformer(templateStream, os);
 		JexlExpressionEvaluator evaluator = (JexlExpressionEvaluator)transformer.getTransformationConfig().getExpressionEvaluator();
 		Map<String, Object> funcs = new HashMap<String, Object>();
-		funcs.put("utils", new ExcelSupport());    //添加自定义功能
+		funcs.put("utils", new ExcelUtil());    //添加自定义功能
         evaluator.getJexlEngine().setFunctions(funcs);
         jxlsHelper.processTemplate(context, transformer);
 	}
