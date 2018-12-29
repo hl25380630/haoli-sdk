@@ -4,6 +4,11 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Map;
 
+/**
+ * map工具类
+ * @author 李昊
+ *
+ */
 public class MapUtil {
 
 	public static Integer getInteger(Map<String, Object> map, String key) {

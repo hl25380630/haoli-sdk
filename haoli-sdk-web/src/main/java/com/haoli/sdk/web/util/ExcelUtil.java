@@ -14,9 +14,19 @@ import org.jxls.transform.Transformer;
 import org.jxls.util.JxlsHelper;
 import org.springframework.stereotype.Component;
 
-@Component
+/**
+ * excel工具类，用于导出excel表，使用的时候需要使用@Autowired注入
+ * 不然this.getClass().getResourceAsStream无法生效
+ * @author 李昊
+ */
 public class ExcelUtil {
 	
+	/**
+	 * 用于根据指定的模板导出excel表，可以添加自定义的函数功能，
+	 * @param template 导出模板
+	 * @param os 输出流
+	 * @param varMap 想要导出的数据
+	 */
 	public void exportExcel(String template, OutputStream os, Map<String, Object> varMap) throws IOException {
 		InputStream templateStream = this.getClass().getResourceAsStream(template);
 		Context context = new Context(varMap);
@@ -29,6 +39,11 @@ public class ExcelUtil {
         jxlsHelper.processTemplate(context, transformer);
 	}
 	
+	/**
+	 * 用于对excel中日期格式的列的值进行想要的格式变换
+	 * @param date 日期
+	 * @param fmt 想要format的日期形式
+	 */
     public String dateFmt(Date date, String fmt) {
         if (date == null) {
             return "";
@@ -37,5 +52,21 @@ public class ExcelUtil {
         return dateFmt.format(date);
     }
     
-
+    /**
+     * 用于替换导出的excel表中想要替换的某一列的值
+     * @param rawValue 原值
+     * @param jsonValueMap 想要替换的值的json合集，值与值之间用逗号隔开，key与value之间用冒号
+     */
+    public String replace(String rawValue, String jsonValueMap) {
+    	String[] ss = jsonValueMap.split(",");
+    	Map<String, Object> map = new HashMap<String, Object>();
+    	for(String s : ss) {
+    		String[] entry = s.split(":");
+    		String key = entry[0];
+    		String value = entry[1];
+    		map.put(key, value);
+    	}
+    	String value = MapUtil.getString(map, rawValue);
+    	return value;
+    }
 }
