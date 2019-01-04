@@ -49,7 +49,8 @@ public class EmailUtil {
 	 * @param subject 主题
 	 * @param content 内容
 	 * @param cc 抄送人
-	 * @param contentIds 附件或资源的识别id
+	 * @param contentIds 附件或资源的识别id,content-id 字段头用于为"multipart/related"组合消息中的内嵌资源指定一个唯一标识符
+	 * 					在html格式的正文中可以使用这个唯一标识符来引用内嵌资源。
 	 * @param urlList 附件或资源列表
 	 */
 	public void sendEmail(String[] toList, String subject, String content, String cc, 
