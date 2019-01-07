@@ -8,8 +8,10 @@ import javax.activation.URLDataSource;
 import javax.mail.Address;
 import javax.mail.Authenticator;
 import javax.mail.Message;
+import javax.mail.NoSuchProviderException;
 import javax.mail.PasswordAuthentication;
 import javax.mail.Session;
+import javax.mail.Store;
 import javax.mail.Transport;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeBodyPart;
@@ -17,6 +19,7 @@ import javax.mail.internet.MimeMessage;
 import javax.mail.internet.MimeMultipart;
 
 import com.haoli.sdk.web.domain.MailConfig;
+import com.sun.mail.util.MailSSLSocketFactory;
 
 /**
  * 邮件发送工具类
@@ -33,7 +36,7 @@ public class EmailUtil {
 	private String port;
 	
 	//用户名
-	private String username;
+	private String userName;
 
 	//密码
 	private String password;
@@ -47,16 +50,14 @@ public class EmailUtil {
 	//是否使用ssl
 	private boolean ssl;
 	
-	
 	public EmailUtil() {
 		
 	}
 	
-	
 	public EmailUtil(MailConfig mailConfig) {
 		this.host = mailConfig.getHost();
 		this.port = mailConfig.getPort();
-		this.username = mailConfig.getUsername();
+		this.userName = mailConfig.getUserName();
 		this.password = mailConfig.getPassword();
 		this.fromEmail = mailConfig.getFromEmail();
 		this.fromName = mailConfig.getFromName();
@@ -68,7 +69,7 @@ public class EmailUtil {
 	 * @param to 收件人
 	 * @param subject 主题
 	 * @param content 内容
-	 * @param cc 抄送人
+	 * @param cc 抄送
 	 * @param contentIds 附件或资源的识别id,content-id 字段头用于为"multipart/related"组合消息中的内嵌资源指定一个唯一标识符
 	 * 					在html格式的正文中可以使用这个唯一标识符来引用内嵌资源。
 	 * @param urlList 附件或资源列表
@@ -78,13 +79,14 @@ public class EmailUtil {
 		Authenticator authenticator = new Authenticator() {
 			@Override
 			protected PasswordAuthentication getPasswordAuthentication() {
-				return new PasswordAuthentication(username, password);
+				return new PasswordAuthentication(userName, password);
 			}
 		};
 		Properties props = new Properties();
 		props.setProperty("mail.smtp.host", host);
 		props.put("mail.smtp.auth", "true");
 		props.setProperty("mail.smtp.port", port);
+		props.setProperty("mail.smtp.ssl.enable", "false");
 		if(ssl) {
 			props.setProperty("mail.smtp.socketFactory.class", "javax.net.ssl.SSLSocketFactory");
 			props.setProperty("mail.smtp.socketFactory.port", "465");
@@ -107,7 +109,6 @@ public class EmailUtil {
 		for(int i=0;i<contentIds.length;i++) {
 			String contentId = contentIds[i];
 			MimeBodyPart imageBody = new MimeBodyPart();
-			//用于读取互联网上的资源
 			DataHandler picDataHandler = new DataHandler(new URLDataSource(new URL(urlList[i])));
 			imageBody.setDataHandler(picDataHandler);
 			imageBody.setContentID("<" + contentId + ">");
@@ -118,4 +119,20 @@ public class EmailUtil {
 		Transport.send(message);
 	}
 
+	/**
+	 * 用于判断是否可以连接指定的邮件服务器
+	 */
+	public boolean connect() throws Exception {
+		Properties props = new Properties();
+		props.setProperty("mail.transport.protocol", "smtps");
+		if(ssl) {
+			props.setProperty("mail.smtp.socketFactory.class", "javax.net.ssl.SSLSocketFactory");
+			props.setProperty("mail.smtp.socketFactory.port", "465");
+		}
+		Session session = Session.getInstance(props);
+		session.setDebug(true);
+		Transport t = session.getTransport();
+		t.connect(host, Integer.valueOf(port), userName, password);
+		return true;
+	}
 }

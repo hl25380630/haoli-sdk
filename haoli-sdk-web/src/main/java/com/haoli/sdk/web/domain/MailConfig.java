@@ -15,7 +15,7 @@ public class MailConfig {
 	private String port;
 	
 	//用户名
-	private String username;
+	private String userName;
 
 	//密码
 	private String password;
@@ -28,7 +28,6 @@ public class MailConfig {
 	
 	//是否使用ssl
 	private boolean ssl;
-	
 
 	public Long getUserId() {
 		return userId;
@@ -62,12 +61,12 @@ public class MailConfig {
 		this.port = port;
 	}
 
-	public String getUsername() {
-		return username;
+	public String getUserName() {
+		return userName;
 	}
 
-	public void setUsername(String username) {
-		this.username = username;
+	public void setUserName(String userName) {
+		this.userName = userName;
 	}
 
 	public String getPassword() {
@@ -101,5 +100,5 @@ public class MailConfig {
 	public void setSsl(boolean ssl) {
 		this.ssl = ssl;
 	}
-	
+
 }
