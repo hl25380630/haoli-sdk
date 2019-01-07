@@ -16,31 +16,51 @@ import javax.mail.internet.MimeBodyPart;
 import javax.mail.internet.MimeMessage;
 import javax.mail.internet.MimeMultipart;
 
+import com.haoli.sdk.web.domain.MailConfig;
+
 /**
  * 邮件发送工具类
+ * 可以动态配置发送邮件所用的邮件服务器，也可以写死
  * @author 李昊
  *
  */
 public class EmailUtil {
 	
-	private String host = "smtp.boe.com.cn";
-
-	private String username = "service@boe.com.cn";
-
-	private String passwd = "boe654321";
+	//smtp邮箱服务器地址
+	private String host;
 	
-	private String fromEmail = "service@boe.com.cn";
-
-	private String fromName = "京东方（BOE）";
+	//smtp端口
+	private String port;
 	
-	public static void main(String[] args) throws Exception {
-		String content ="<img src=\"cid:www.baidu.com/img/bd_logo1.png\" alt=\"\" style=\"display:block; margin:0 auto; width:80%; text-align:center;\">";
-		String img = "http://boe-ssc-object.oss-cn-beijing.aliyuncs.com/pdf/zhusu.pdf";
-		EmailUtil eu = new EmailUtil();
-		String[] toList = {"lihao_100@boe.com.cn","qiuxue@nancal.com"};
-		String[] contentIds = {"attr1"};
-		String[] urlList = {img};
-		eu.sendEmail(toList , "test email",content, null, contentIds,urlList);
+	//用户名
+	private String username;
+
+	//密码
+	private String password;
+	
+	//发件人邮箱地址
+	private String fromEmail;
+	
+	//发件人名称
+	private String fromName;
+	
+	//是否使用ssl
+	private boolean ssl;
+	
+	
+	public EmailUtil() {
+		
+	}
+	
+	
+	public EmailUtil(MailConfig mailConfig) {
+		this.host = mailConfig.getHost();
+		this.port = mailConfig.getPort();
+		this.username = mailConfig.getUsername();
+		this.password = mailConfig.getPassword();
+		this.fromEmail = mailConfig.getFromEmail();
+		this.fromName = mailConfig.getFromName();
+		this.ssl = mailConfig.isSsl();
 	}
 	
 	/**
@@ -58,12 +78,17 @@ public class EmailUtil {
 		Authenticator authenticator = new Authenticator() {
 			@Override
 			protected PasswordAuthentication getPasswordAuthentication() {
-				return new PasswordAuthentication(username, passwd);
+				return new PasswordAuthentication(username, password);
 			}
 		};
 		Properties props = new Properties();
 		props.setProperty("mail.smtp.host", host);
 		props.put("mail.smtp.auth", "true");
+		props.setProperty("mail.smtp.port", port);
+		if(ssl) {
+			props.setProperty("mail.smtp.socketFactory.class", "javax.net.ssl.SSLSocketFactory");
+			props.setProperty("mail.smtp.socketFactory.port", "465");
+		}
 		Session session = Session.getInstance(props, authenticator);
 		MimeMessage message = new MimeMessage(session);
 		message.setFrom(new InternetAddress(fromEmail, fromName));
