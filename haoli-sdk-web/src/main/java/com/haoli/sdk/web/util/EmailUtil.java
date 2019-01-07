@@ -86,6 +86,7 @@ public class EmailUtil {
 		props.setProperty("mail.smtp.host", host);
 		props.put("mail.smtp.auth", "true");
 		props.setProperty("mail.smtp.port", port);
+		//设置为true时，当时用指定的socket类创建socket失败后，将使用java.net.Socket创建socket，默认为true
 		props.setProperty("mail.smtp.ssl.enable", "false");
 		if(ssl) {
 			props.setProperty("mail.smtp.socketFactory.class", "javax.net.ssl.SSLSocketFactory");
