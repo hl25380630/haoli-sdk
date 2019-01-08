@@ -24,6 +24,8 @@ public class RsaUtil {
 	
 	public static void main(String[] args) throws Exception {
 		RSAKey keys = RsaUtil.genKeyPair();
+		System.out.println(keys.getPublicKeyString());
+		System.out.println(keys.getPrivateKeyString());
 		String str = RsaUtil.encrypt("haoli_personal_site", keys.getPublicKeyString());
 		System.out.println(str);
 		String destr = RsaUtil.decrypt(str, keys.getPrivateKeyString());
