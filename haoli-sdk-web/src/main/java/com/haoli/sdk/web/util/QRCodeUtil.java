@@ -4,10 +4,10 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
-import java.util.Base64;
-import java.util.Base64.Encoder;
 import java.util.HashMap;
 import java.util.Map;
+
+import org.apache.commons.codec.binary.Base64;
 
 import com.google.zxing.BarcodeFormat;
 import com.google.zxing.EncodeHintType;
@@ -87,8 +87,7 @@ public class QRCodeUtil {
 			Integer height) throws WriterException, IOException{
 		ByteArrayOutputStream out=new ByteArrayOutputStream();
 		writeToStream(content, out, width, height);
-		Encoder encoder=Base64.getEncoder();
-		return encoder.encodeToString(out.toByteArray());
+		return Base64.encodeBase64String(out.toByteArray());
 	}
 		
 }

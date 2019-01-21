@@ -3,8 +3,6 @@ package com.haoli.sdk.web.domain;
 import java.security.interfaces.RSAPrivateKey;
 import java.security.interfaces.RSAPublicKey;
 
-import org.springframework.stereotype.Component;
-
 public class RSAKey {
 	private RSAPrivateKey privateKey;
 	private String privateKeyString;

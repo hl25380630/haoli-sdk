@@ -12,7 +12,6 @@ import org.jxls.common.Context;
 import org.jxls.expression.JexlExpressionEvaluator;
 import org.jxls.transform.Transformer;
 import org.jxls.util.JxlsHelper;
-import org.springframework.stereotype.Component;
 
 /**
  * excel工具类，用于导出excel表，使用的时候需要使用@Autowired注入
