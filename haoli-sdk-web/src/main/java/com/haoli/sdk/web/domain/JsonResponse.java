@@ -16,6 +16,16 @@ public class JsonResponse<T> {
 	
 	private T data;
 	
+	public JsonResponse(){
+		
+	}
+	
+	public JsonResponse(T data) {
+		this.data = data;
+		this.code = SUCCESS_CODE;
+		this.msg = SUCCESS_MSG;
+	}
+	
 	public JsonResponse(T data, String code, String msg) {
 		this.data = data;
 		this.code = code;

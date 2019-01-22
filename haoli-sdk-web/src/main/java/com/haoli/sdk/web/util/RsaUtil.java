@@ -29,7 +29,7 @@ public class RsaUtil {
 		JSONObject jobj = JSONObject.parseObject(s);
 		String privateKey = jobj.getString("RsaPrivateKey");
 		String publicKey = jobj.getString("RsaPublicKey");
-		String str = RsaUtil.encrypt("123456", publicKey);
+		String str = RsaUtil.encrypt("Li134679258!", publicKey);
 		System.out.println(str);
 		String destr = RsaUtil.decrypt(str, privateKey);
 		System.out.println(destr);

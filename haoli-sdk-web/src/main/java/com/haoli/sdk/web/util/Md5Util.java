@@ -5,7 +5,8 @@ import org.apache.commons.codec.digest.DigestUtils;
 
 
 public class Md5Util {
-
+	
+	
     /**
      * 签名字符串
      * @param text 需要签名的字符串
