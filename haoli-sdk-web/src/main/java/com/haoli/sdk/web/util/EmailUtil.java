@@ -120,17 +120,23 @@ public class EmailUtil {
 	/**
 	 * 用于判断是否可以连接指定的邮件服务器
 	 */
-	public boolean connect() throws Exception {
+	public boolean connect(){
 		Properties props = new Properties();
-		props.setProperty("mail.transport.protocol", "smtps");
-		if(ssl) {
+		props.setProperty("mail.smtp.host", host);
+		props.setProperty("mail.smtp.auth", "true"); 
+		props.setProperty("mail.transport.protocol", "smtp");
+		if("true".equals(ssl)) {
 			props.setProperty("mail.smtp.socketFactory.class", "javax.net.ssl.SSLSocketFactory");
 			props.setProperty("mail.smtp.socketFactory.port", "465");
 		}
 		Session session = Session.getInstance(props);
 		session.setDebug(true);
-		Transport t = session.getTransport();
-		t.connect(host, Integer.valueOf(port), userName, password);
+		try {
+			Transport t = session.getTransport();
+			t.connect(host, Integer.valueOf(port), userName, password);
+		} catch (Exception e) {
+			return false;
+		}
 		return true;
 	}
 }
