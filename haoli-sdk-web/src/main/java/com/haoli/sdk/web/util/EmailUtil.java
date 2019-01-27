@@ -104,15 +104,19 @@ public class EmailUtil {
 		textBody.setContent(content, "text/html;charset=utf-8");
 		MimeMultipart relatedMultipart = new MimeMultipart();
 		relatedMultipart.addBodyPart(textBody);
-		for(int i=0;i<contentIds.length;i++) {
-			String contentId = contentIds[i];
-			MimeBodyPart imageBody = new MimeBodyPart();
-			DataHandler picDataHandler = new DataHandler(new URLDataSource(new URL(urlList[i])));
-			imageBody.setDataHandler(picDataHandler);
-			imageBody.setContentID("<" + contentId + ">");
-			relatedMultipart.addBodyPart(imageBody);
+		//添加附件
+		if(urlList != null && urlList.length > 0) {
+
+			for(int i=0;i<contentIds.length;i++) {
+				String contentId = contentIds[i];
+				MimeBodyPart imageBody = new MimeBodyPart();
+				DataHandler picDataHandler = new DataHandler(new URLDataSource(new URL(urlList[i])));
+				imageBody.setDataHandler(picDataHandler);
+				imageBody.setContentID("<" + contentId + ">");
+				relatedMultipart.addBodyPart(imageBody);
+			}
+			relatedMultipart.setSubType("related");
 		}
-		relatedMultipart.setSubType("related");
 		message.setContent(relatedMultipart);
 		Transport.send(message);
 	}
