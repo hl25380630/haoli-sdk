@@ -11,5 +11,6 @@
   
   <modules>
   	<module>haoli-sdk-web</module>
+  	<module>haoli-sdk-algorithem</module>
   </modules>
 </project>
