@@ -6,64 +6,53 @@ package com.haoli.algorithem.util;
  */
 public class SortUtil {
 	
-	public static void main(String[] args) {
-		SortUtil su = new SortUtil();
-		int[] array = {1, 4, 3, 5, 9, 8, 7, 2, 6};
-		su.mergeSort(array);
-		for(int i=0; i<array.length; i++) {
-			System.out.print(array[i] + " ");
-		}
-
-	}
-	
-	public void mergeSort(int[] array) {
-		this.sort(array, 0, array.length-1);
-	}
-	
 	/**
 	 * merge sort 归并排序
+	 * 时间复杂度O(nlogn), 空间复杂度O(n)
 	 * @param array
 	 */
-	public void sort(int[] array, int start, int end) {
+	public int[] mergeSort(int[] array) {
+		int[] result = this.sort(array, 0, array.length-1);
+		return result;
+	}
+
+	public int[] sort(int[] array, int start, int end) {
 		if(start >= end) {
-			return;
+			int[] temp = new int[1];
+			temp[0] = array[start];
+			return temp;
 		}
 		int mid = (end + start)/2;
-		this.sort(array, start, mid);
-		this.sort(array, mid+1, end);
-		this.mergeArrays(array, start, mid, end);
+		int[] left = this.sort(array, start, mid);
+		int[] right = this.sort(array, mid+1, end);
+		int[] result = this.mergeArrays(left, right);
+		return result;
 	}
 	
-	public void mergeArrays(int[] array, int start, int mid, int end) {
-		int[] tempArray = new int[array.length];
-		int tempIndex = start;
-		int index = start;
-		int halfIndex = mid+1;
-		while(start <= mid && halfIndex <= end) {
-			if(array[start] <= array[halfIndex]) {
-				tempArray[tempIndex] = array[start];
-				tempIndex++;
-				start++;
+	public int[] mergeArrays(int[] left, int[] right) {
+		int leftIndex = 0;
+		int rightIndex = 0;
+		int leftEnd = left.length-1;
+		int rightEnd = right.length-1;
+		int[] temp = new int[left.length + right.length];
+		int index = 0;
+		while(leftIndex <= leftEnd && rightIndex <= rightEnd) {
+			if(left[leftIndex] <= right[rightIndex]) {
+				temp[index++] = left[leftIndex++];
 			}else {
-				tempArray[tempIndex] = array[halfIndex];
-				tempIndex++;
-				halfIndex++;
+				temp[index++] = right[rightIndex++];
 			}
 		}
-		while(start <= mid) {
-			tempArray[tempIndex] = array[start];
-			tempIndex++;
-			start++;
+		if(leftIndex > leftEnd) {
+			while(rightIndex<=rightEnd) {
+				temp[index++] = right[rightIndex++];
+			}
+		}else {
+			while(leftIndex<=leftEnd) {
+				temp[index++] = left[leftIndex++];
+			}
 		}
-		while(halfIndex <=end) {
-			tempArray[tempIndex] = array[halfIndex];
-			tempIndex++;
-			halfIndex++;
-		}
-		while(index <= end) {
-			array[index] = tempArray[index];
-			index++;
-		}
+		return temp;
 	}
 
 }
