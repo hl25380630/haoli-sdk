@@ -6,6 +6,61 @@ package com.haoli.algorithem.util;
  */
 public class SortUtil {
 	
+	public static void main(String[] args) {
+		int[] array = {1, 5, 2, 4, 3,6};
+		SortUtil su = new SortUtil();
+		su.quickSort(array);
+		for(int i=0; i<array.length; i++) {
+			System.out.print(array[i] + " ");
+		}
+	}
+	
+	/**
+	 * 摆动排序
+	 */
+	public void wiggleSort(int[] array) {
+		
+	}
+	
+	/**
+	 *快速排序 
+	 *时间复杂度:最坏O(n2), 最优O(nlogn)
+	 */
+	public void quickSort(int[] array) {
+		this.quickSort(array, 0, array.length-1);
+	}
+	
+	public void quickSort(int[] array, int low, int high) {
+        if(low > high){
+            return;
+        }
+        int start = low; //左哨兵
+        int sindex = start;
+        int end = high; //右哨兵
+        int standard = array[low]; //基准值
+        while(start < end) {
+        	while(standard <= array[end] && start < end) {
+        		end--;
+        	}
+        	while(standard >= array[start] && start < end) {
+        		start++;
+        	}
+        	if(start < end) {
+        		int startValue = array[start];
+        		int endValue = array[end];
+        		int tempValue = startValue;
+        		array[start] = endValue;
+        		array[end] = tempValue;
+        	}
+        }
+        int value = array[start];
+        array[sindex] = value;
+        array[start] = standard;
+        
+        this.quickSort(array, low, end-1);
+        this.quickSort(array, end+1, high);
+	}
+	
 	/**
 	 * merge sort 归并排序
 	 * 时间复杂度O(nlogn), 空间复杂度O(n)
