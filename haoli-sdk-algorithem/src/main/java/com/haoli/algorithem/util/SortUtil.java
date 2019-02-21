@@ -1,5 +1,7 @@
 package com.haoli.algorithem.util;
 
+import java.util.Arrays;
+
 /**
  * 排序工具包
  * @author 李昊
@@ -7,23 +9,44 @@ package com.haoli.algorithem.util;
 public class SortUtil {
 	
 	public static void main(String[] args) {
-		int[] array = {1, 5, 2, 4, 3,6};
+		int[] array = {1, 5, 1, 1, 6, 4};
 		SortUtil su = new SortUtil();
-		su.quickSort(array);
-		for(int i=0; i<array.length; i++) {
-			System.out.print(array[i] + " ");
+		int[] result = su.wiggleSort(array);
+		for(int i=0; i<result.length; i++) {
+			System.out.print(result[i] + " ");
 		}
 	}
 	
 	/**
 	 * 摆动排序
 	 */
-	public void wiggleSort(int[] array) {
-		
+	public int[] wiggleSort(int[] array) {
+		Arrays.sort(array);
+		int startIndex = 0;
+		int lastIndex = array.length-1;
+		int midIndex = (lastIndex + startIndex)/2;
+		int leftIndex = startIndex;
+		int rightIndex = midIndex+1;
+		int index = 0;
+		int[] result = new int[array.length];
+		while(leftIndex <= midIndex || rightIndex <= lastIndex) {
+			if(index%2 == 0) {
+				if(leftIndex > midIndex) {
+					continue;
+				}
+				result[index++] = array[leftIndex++];
+			}else {
+				if(rightIndex > lastIndex) {
+					continue;
+				}
+				result[index++] = array[rightIndex++];
+			}
+		}
+		return result;
 	}
 	
 	/**
-	 *快速排序 
+	 *快速排序 （空间不稳定）
 	 *时间复杂度:最坏O(n2), 最优O(nlogn)
 	 */
 	public void quickSort(int[] array) {
@@ -62,7 +85,7 @@ public class SortUtil {
 	}
 	
 	/**
-	 * merge sort 归并排序
+	 * merge sort 归并排序（空间稳定）
 	 * 时间复杂度O(nlogn), 空间复杂度O(n)
 	 * @param array
 	 */
