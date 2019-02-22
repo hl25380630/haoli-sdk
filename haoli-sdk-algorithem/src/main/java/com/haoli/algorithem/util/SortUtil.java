@@ -11,9 +11,9 @@ public class SortUtil {
 	public static void main(String[] args) {
 		int[] array = {1, 5, 1, 1, 6, 4};
 		SortUtil su = new SortUtil();
-		int[] result = su.wiggleSort(array);
-		for(int i=0; i<result.length; i++) {
-			System.out.print(result[i] + " ");
+		su.wiggleSort2(array);
+		for(int i=0; i<array.length; i++) {
+			System.out.print(array[i] + " ");
 		}
 	}
 	
@@ -46,6 +46,60 @@ public class SortUtil {
 	}
 	
 	/**
+	 * 摆动排序2
+	 * leet code 324
+	 */
+	public void wiggleSort2(int[] array) {
+		if(array.length <=1) {
+			return;
+		}
+		int index1 = 0;
+		int index2 = 1;
+		int current = 0;
+		while(index2 <= array.length-1 && current <= array.length-1) {
+			if(current % 2 ==0) {
+				if(array[index2] > array[index1]) {
+					current ++;
+					index1++;
+					index2++;
+				}else {
+					int indexTemp = index2;
+					while(array[indexTemp] <= array[index1]) {
+						indexTemp++;
+						continue;
+					}
+					int value = array[indexTemp];
+					int temp = array[index2];
+					array[index2] = value;
+					array[indexTemp] = temp;
+					current++;
+					index1++;
+					index2++;
+				}
+			}else {
+				if(array[index2] < array[index1]) {
+					current++;
+					index1++;
+					index2++;
+				}else {
+					int indexTemp = index2;
+					while(array[indexTemp] >= array[index1]) {
+						indexTemp++;
+						continue;
+					}
+					int value = array[indexTemp];
+					int temp = array[index2];
+					array[index2] = value;
+					array[indexTemp] = temp;
+					current++;
+					index1++;
+					index2++;
+				}
+			}
+		}
+	}
+	
+	/**
 	 *快速排序 （空间不稳定）
 	 *时间复杂度:最坏O(n2), 最优O(nlogn)
 	 */
@@ -62,12 +116,15 @@ public class SortUtil {
         int end = high; //右哨兵
         int standard = array[low]; //基准值
         while(start < end) {
+        	//从后往前找，如果碰到小于基准值的数，则停止
         	while(standard <= array[end] && start < end) {
         		end--;
         	}
+        	//从前往后找，如果碰到大于基准值的数，则停止
         	while(standard >= array[start] && start < end) {
         		start++;
         	}
+        	//如果此时左哨兵位置仍小于右哨兵的位置，则左哨兵与右哨兵所在位置的值交换
         	if(start < end) {
         		int startValue = array[start];
         		int endValue = array[end];
