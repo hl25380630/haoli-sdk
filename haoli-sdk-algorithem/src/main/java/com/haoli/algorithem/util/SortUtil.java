@@ -9,9 +9,9 @@ import java.util.Arrays;
 public class SortUtil {
 	
 	public static void main(String[] args) {
-		int[] array = {1, 3, 2, 2, 3, 1};
+		int[] array = {1, 1, 2, 2, 3,};
 		SortUtil su = new SortUtil();
-		su.wiggleSort2(array);
+		su.wiggleSort(array);
 		for(int i=0; i<array.length; i++) {
 			System.out.print(array[i] + " ");
 		}
@@ -20,31 +20,23 @@ public class SortUtil {
 	/**
 	 * 摆动排序
 	 */
-	public int[] wiggleSort(int[] array) {
-		Arrays.sort(array);
-		int startIndex = 0;
-		int lastIndex = array.length-1;
-		int midIndex = (lastIndex + startIndex)/2;
-		int leftIndex = startIndex;
-		int rightIndex = midIndex+1;
-		int index = 0;
-		int[] result = new int[array.length];
-		while(leftIndex <= midIndex || rightIndex <= lastIndex) {
-			if(index%2 == 0) {
-				if(leftIndex > midIndex) {
-					continue;
-				}
-				result[index++] = array[leftIndex++];
-			}else {
-				if(rightIndex > lastIndex) {
-					continue;
-				}
-				result[index++] = array[rightIndex++];
-			}
+	public void wiggleSort(int[] nums) {
+		Arrays.sort(nums);
+		int[] newnums = new int[nums.length];//定义新数组将原数组隔位插入
+		for (int i = nums.length - 1, j = 1; i >= 0 && j < nums.length ; i--, j = j + 2) {
+			//将数组从大到小开始从newnums[1]隔行插入进新数组，偶数数组到nums.length-1结束，奇数数组到nums.length-1-1处结束。
+			//举例 newnums｛0，6，0，5，0，4｝j的值分别为 1，3，5
+			newnums[j] = nums[i];		
 		}
-		return result;
+		//继续将数组从大到小开始从newnums[0]隔行插入进新数组，偶数数组到nums.length-1-1结束，奇数数组到nums.length-1处结束。保证数组中每个位置都有值。
+		//举例 newnums｛3，6，2，5，1，4｝j的值分别为 0，2，4
+		for (int i = (nums.length - 1) / 2, j = 0; i >= 0 && j < nums.length; i--, j = j + 2) {
+			newnums[j] = nums[i];		}
+		//将排列好的数组数据赋给原数组
+		for (int i = 0; i < nums.length; i++) {
+			nums[i] = newnums[i];
+		}
 	}
-	
 	/**
 	 * 摆动排序2
 	 * leet code 324
