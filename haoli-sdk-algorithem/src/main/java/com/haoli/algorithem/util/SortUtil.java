@@ -9,7 +9,7 @@ import java.util.Arrays;
 public class SortUtil {
 	
 	public static void main(String[] args) {
-		int[] array = {1, 5, 1, 1, 6, 4};
+		int[] array = {1, 3, 2, 2, 3, 1};
 		SortUtil su = new SortUtil();
 		su.wiggleSort2(array);
 		for(int i=0; i<array.length; i++) {
@@ -64,9 +64,12 @@ public class SortUtil {
 					index2++;
 				}else {
 					int indexTemp = index2;
-					while(array[indexTemp] <= array[index1]) {
+					while(indexTemp <= array.length-1 && array[indexTemp] <= array[index1]) {
 						indexTemp++;
 						continue;
+					}
+					if(indexTemp > array.length-1) {
+						break;
 					}
 					int value = array[indexTemp];
 					int temp = array[index2];
