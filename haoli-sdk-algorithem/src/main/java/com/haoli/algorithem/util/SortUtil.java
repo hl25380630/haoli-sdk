@@ -18,7 +18,8 @@ public class SortUtil {
 	}
 	
 	/**
-	 * 摆动排序
+	 * 摆动排序2
+	 * leet code 324
 	 */
 	public void wiggleSort(int[] nums) {
 		Arrays.sort(nums);
@@ -35,62 +36,6 @@ public class SortUtil {
 		//将排列好的数组数据赋给原数组
 		for (int i = 0; i < nums.length; i++) {
 			nums[i] = newnums[i];
-		}
-	}
-	/**
-	 * 摆动排序2
-	 * leet code 324
-	 */
-	public void wiggleSort2(int[] array) {
-		if(array.length <=1) {
-			return;
-		}
-		int index1 = 0;
-		int index2 = 1;
-		int current = 0;
-		while(index2 <= array.length-1 && current <= array.length-1) {
-			if(current % 2 ==0) {
-				if(array[index2] > array[index1]) {
-					current ++;
-					index1++;
-					index2++;
-				}else {
-					int indexTemp = index2;
-					while(indexTemp <= array.length-1 && array[indexTemp] <= array[index1]) {
-						indexTemp++;
-						continue;
-					}
-					if(indexTemp > array.length-1) {
-						break;
-					}
-					int value = array[indexTemp];
-					int temp = array[index2];
-					array[index2] = value;
-					array[indexTemp] = temp;
-					current++;
-					index1++;
-					index2++;
-				}
-			}else {
-				if(array[index2] < array[index1]) {
-					current++;
-					index1++;
-					index2++;
-				}else {
-					int indexTemp = index2;
-					while(array[indexTemp] >= array[index1]) {
-						indexTemp++;
-						continue;
-					}
-					int value = array[indexTemp];
-					int temp = array[index2];
-					array[index2] = value;
-					array[indexTemp] = temp;
-					current++;
-					index1++;
-					index2++;
-				}
-			}
 		}
 	}
 	
