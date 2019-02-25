@@ -9,11 +9,44 @@ import java.util.Arrays;
 public class SortUtil {
 	
 	public static void main(String[] args) {
-		int[] array = {1, 1, 2, 2, 3,};
 		SortUtil su = new SortUtil();
-		su.wiggleSort(array);
-		for(int i=0; i<array.length; i++) {
-			System.out.print(array[i] + " ");
+		int[] nums1 = {1,2,3,0,0,0};
+		int[] nums2 = {2,5,6};
+		su.mergeTwoSortedArray(nums1, 3, nums2, 3);
+		for(int i=0; i<nums1.length; i++) {
+			System.out.print(nums1[i] + " ");
+		}
+	}
+	
+	/**
+	 * 合并两个已经排序好的数组(Merge Sorted Array)
+	 * leetcode 88 
+	 * @param nums1 数组1
+	 * @param m 数组1有效元素数量
+	 * @param nums2 数组2
+	 * @param n 数组2有效元素数量
+	 */
+	public void mergeTwoSortedArray(int[] nums1, int m, int[] nums2, int n) {
+		int index1 = 0;
+		int index2 = 0;
+		int index = 0;
+		int totalLength = m+n;
+		int[] result = new int[totalLength];
+		while(index1 < m && index2 < n) {
+			if(index <= totalLength-1 && nums1[index1] < nums2[index2]) {
+				result[index++] = nums1[index1++];
+			}else {
+				result[index++] = nums2[index2++];
+			}
+		}
+		while(index1 < m) {
+			result[index++] = nums1[index1++];
+		}
+		while(index2 < n) {
+			result[index++] = nums2[index2++];
+		}
+		for(int i=0; i<result.length; i++) {
+			nums1[i] = result[i];
 		}
 	}
 	
