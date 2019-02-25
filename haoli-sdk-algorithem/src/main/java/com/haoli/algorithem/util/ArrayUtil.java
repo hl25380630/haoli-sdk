@@ -64,4 +64,21 @@ public class ArrayUtil {
 			nums1[i] = result[i];
 		}
 	}
+	
+	/**
+	 * (排序好的数组转为2叉查询树)Convert Sorted Array to Binary Search Tree
+	 * leetcode 108
+	 * @param nums
+	 * @return
+	 */
+    public TreeNode sortedArrayToBST(int[] nums) {
+        return null;
+    }
+    
+    public class TreeNode {
+		int val;
+		TreeNode left;
+		TreeNode right;
+		TreeNode(int x) { val = x; }
+    }
 }
