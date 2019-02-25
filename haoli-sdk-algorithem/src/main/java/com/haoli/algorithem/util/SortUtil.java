@@ -18,6 +18,37 @@ public class SortUtil {
 		}
 	}
 	
+	
+	/**
+	 *  删除一个排好序数组的重复元素 （Remove Duplicates from Sorted Array）
+	 *  leetcode 26
+	 *  @param nums sorted array
+	 */
+	public int removeDuplicate(int[] nums) {
+		int index1 = 0;
+		int index2 = 1;
+		int count = 1;
+		while(index2 < nums.length) {
+			if(nums[index2] != nums[index1]) {
+				index2++;
+				index1++;
+				count++;
+			}else {
+				while(index2 < nums.length) {
+					if(nums[index2] != nums[index1]) {
+						int temp = nums[index2];
+						nums[index1+1] = temp;
+						index1++;
+						count++;
+						break;
+					}
+					index2++;
+				}
+			}
+		}
+		return count;
+	}
+	
 	/**
 	 * 合并两个已经排序好的数组(Merge Sorted Array)
 	 * leetcode 88 
