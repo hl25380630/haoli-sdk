@@ -92,68 +92,113 @@ public class ExcelToPdfUtil {
         document.close();
     }
 	
+	/**
+	 *讲excel的sheet页内容转换为pdf 
+	 */
 	public PdfPTable parseContent(Sheet sheet, Workbook wb) throws Exception{
+		//存储每一行转为pdf时所需的所有pdfCell的信息
+		List<List<PdfPCell>> cellsList = new ArrayList<List<PdfPCell>>();
+		//用户存储所有行的宽度，以确定哪一行最长
+		List<Integer> widthList = new ArrayList<Integer>();
+		//存储每一行的所有列的宽度数组信息
+		List<float[]> columnWidthList = new ArrayList<float[]>();
+		//获取该excel sheet的总行数
 		int rowlength = sheet.getLastRowNum();
-        List<PdfPCell> cells = new ArrayList<PdfPCell>();
-        float[] widths = null;
-        float mw = 0;
+        //遍历excel sheet页的每一行
         for (int i = 0; i < rowlength; i++) {
-        	//excel表的每一行
+        	List<PdfPCell> cells = new ArrayList<PdfPCell>();
             Row row = sheet.getRow(i);
             if(row == null) {
             	continue;
             }
+            int rowIndex = row.getRowNum();
+            //获取该行一共有多少列
             int columNo = row.getLastCellNum();
-            float[] cws = new float[columNo];
+            //创建每一列的宽度信息存储数组
+            float[] columnWidthArray = new float[columNo];
+            //遍历每一列
             for (int j = 0; j < columNo; j++) {
+            	//获取单元格
             	Cell cell = row.getCell(j);
                 if(cell == null) {
                 	continue;
                 }
+                int columnIndex = cell.getColumnIndex();
                 //获取每一个单元格的宽度
-                float cw = getPOIColumnWidth(cell, sheet);
-                cws[cell.getColumnIndex()] = cw;
-                if(isUsed(cell.getColumnIndex(), row.getRowNum(), sheet)){
+                float columnWidth = getPOIColumnWidth(cell, sheet);
+                columnWidthArray[columnIndex] = columnWidth;
+                //判断该单元格是否是在融合单元格里（而且不是融合单元格的第一个单元格）,如果是，则跳过该单元格（因为该单元格被合并了，还不是第一个，所以没用）
+                if(isContainedInMergedCells(columnIndex, rowIndex, sheet)){
                     continue;
                 }
                 cell.setCellType(Cell.CELL_TYPE_STRING);
-                CellRangeAddress range = getColspanRowspanByExcel(row.getRowNum(), cell.getColumnIndex(), sheet);
-                //
-                int rowspan = 1;
-                int colspan = 1;
+                //判断该单元格是否属于融合单元格的第一个单元格，如果是，则返回整个融合区域的坐标信息，如果不是，则返回null
+                CellRangeAddress range = getCellMergedErea(row.getRowNum(), cell.getColumnIndex(), sheet);
+                //如果当前单元格属于融合单元格，则计算整个融合区域的长度和高度，如果不是融合单元格，则为单个单元格，长度和宽度均为1
+                int mergedEreaRowSpan = 1;
+                int mergedEreaColumnSpan = 1;
                 if (range != null) {
-                    rowspan = range.getLastRow() - range.getFirstRow() + 1;
-                    colspan = range.getLastColumn() - range.getFirstColumn() + 1;
+                	mergedEreaRowSpan = range.getLastRow() - range.getFirstRow() + 1;
+                	mergedEreaColumnSpan = range.getLastColumn() - range.getFirstColumn() + 1;
                 }
                 //PDF单元格
                 PdfPCell pdfpCell = new PdfPCell();
                 pdfpCell.setBackgroundColor(new BaseColor(getBackgroundColorByExcel(cell.getCellStyle())));
-                pdfpCell.setColspan(colspan);
-                pdfpCell.setRowspan(rowspan);
+                pdfpCell.setColspan(mergedEreaColumnSpan);
+                pdfpCell.setRowspan(mergedEreaRowSpan);
                 pdfpCell.setVerticalAlignment(getVAlignByExcel(cell.getCellStyle().getVerticalAlignment()));
                 pdfpCell.setHorizontalAlignment(getHAlignByExcel(cell.getCellStyle().getAlignment()));
                 pdfpCell.setPhrase(getPhrase(cell, wb));
                 pdfpCell.setFixedHeight(this.getPixelHeight(row.getHeightInPoints()));
-                addBorderByExcel(pdfpCell, cell.getCellStyle(), wb);
-                addImageByPOICell(pdfpCell , cell , cw);
-                //
+                this.addBorderByExcel(pdfpCell, cell.getCellStyle(), wb);
+                this.addImageByPOICell(pdfpCell , cell , columnWidth);
                 cells.add(pdfpCell);
-                j += colspan - 1;
+                //直接跳到下一个单元格,继续进行转换操作
+                j += mergedEreaColumnSpan - 1;
             }
-            float rw = 0;
-            for (int j = 0; j < cws.length; j++) {
-                rw += cws[j];
+            columnWidthList.add(columnWidthArray);
+            cellsList.add(cells);
+            int totalWidth = 0;
+            for(int p=0; p<columnWidthArray.length; p++) {
+            	totalWidth += columnWidthArray[p];
             }
-            if (rw > mw ||  mw == 0) {
-                widths = cws;
-                mw = rw;
-            }
+            widthList.add(totalWidth);
+
         }
-        PdfPTable table = new PdfPTable(widths);
-        table.setWidthPercentage(100);
-        for (PdfPCell pdfpCell : cells) {
-            table.addCell(pdfpCell);
+        //获取所有行里拥有最大长度的那一行
+        int maxWidth = widthList.get(0);
+        int maxIndex = 0;
+        for(int q = 1; q<widthList.size(); q++) {
+        	if(widthList.get(q) > maxWidth) {
+        		maxWidth = widthList.get(q);
+        		maxIndex = q;
+        	}
         }
+        //生成pdfTable用来转换excel文件内容
+		PdfPTable table = new PdfPTable(columnWidthList.get(maxIndex));
+		table.setWidthPercentage(100);
+		for(int rowIndex=0; rowIndex < cellsList.size(); rowIndex++) {
+			int width = widthList.get(rowIndex);
+			int rowSpan = 0;
+			PdfPCell cell = null;
+			List<PdfPCell> cells = cellsList.get(rowIndex);
+	        for (PdfPCell pdfpCell : cells) {
+	        	rowSpan = pdfpCell.getRowspan();
+	        	cell = pdfpCell;
+	            table.addCell(pdfpCell);
+	        }
+	        //如果当前行小于最大长度，则新建一个空cell补充，防止错位
+	        if(width < maxWidth) {
+	        	PdfPCell pcell = new PdfPCell();
+	        	pcell.setBackgroundColor(cell.getBackgroundColor());
+	        	pcell.setColspan(maxWidth - width);
+	        	pcell.setRowspan(rowSpan);
+	        	pcell.setVerticalAlignment(cell.getVerticalAlignment());
+	        	pcell.setHorizontalAlignment(cell.getHorizontalAlignment());
+	        	pcell.setFixedHeight(cell.getFixedHeight());
+	        	table.addCell(pcell);
+	        }
+		}
         return table;
     }
     
@@ -186,8 +231,7 @@ public class ExcelToPdfUtil {
      * @return 像素宽
      */
     protected int getPOIColumnWidth(Cell cell , Sheet sheet) {
-    	int poiCWidth = sheet.getColumnWidth(cell.getColumnIndex());
-        int colWidthpoi = poiCWidth;
+        int colWidthpoi = sheet.getColumnWidth(cell.getColumnIndex());
         int widthPixel = 0;
         if (colWidthpoi >= 416) {
             widthPixel = (int) (((colWidthpoi - 416.0) / 256.0) * 8.0 + 13.0 + 0.5);
@@ -197,7 +241,10 @@ public class ExcelToPdfUtil {
         return widthPixel;
     }
     
-    protected CellRangeAddress getColspanRowspanByExcel(int rowIndex, int colIndex, Sheet sheet) {
+    /**
+     * 判断该单元格是否属于融合单元格的第一个单元格，如果是，则返回整个融合区域的坐标信息，如果不是，则返回null
+     */
+    protected CellRangeAddress getCellMergedErea(int rowIndex, int colIndex, Sheet sheet) {
         CellRangeAddress result = null;
         int num = sheet.getNumMergedRegions();
         for (int i = 0; i < num; i++) {
@@ -209,8 +256,12 @@ public class ExcelToPdfUtil {
         return result;
     }
     
-    protected boolean isUsed(int colIndex , int rowIndex, Sheet sheet){
+    /**
+     * 判断excel的一个单元格是否属于该excel所有融合的单元格之一(且不是融合单元格的第一个单元格)
+     */
+    protected boolean isContainedInMergedCells(int colIndex , int rowIndex, Sheet sheet){
         boolean result = false;
+        //获取合并单元格的总数量
         int num = sheet.getNumMergedRegions();
         for (int i = 0; i < num; i++) {
             CellRangeAddress range = sheet.getMergedRegion(i);
