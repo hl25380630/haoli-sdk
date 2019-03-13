@@ -1,0 +1,34 @@
+package com.haoli.sdk.web.util.microSoftOffice;
+
+import java.io.OutputStream;
+
+import org.docx4j.Docx4J;
+import org.docx4j.convert.out.FOSettings;
+import org.docx4j.fonts.IdentityPlusMapper;
+import org.docx4j.fonts.Mapper;
+import org.docx4j.fonts.PhysicalFonts;
+import org.docx4j.openpackaging.packages.WordprocessingMLPackage;
+import org.docx4j.org.apache.poi.util.IOUtils;
+
+public class WordToPdfUtil {
+	
+	
+	/**
+	 * word文档转换为pdf文档
+	 * @param source 目标文件地址
+	 * @param dest 转换后文件存储地址
+	 */
+	public void convertDocxToPDF(String source, String dest) throws Exception {  
+    	OutputStream os = new java.io.FileOutputStream(dest);  
+    	WordprocessingMLPackage wordMLPackage = WordprocessingMLPackage.load(new java.io.File(source));
+    	Mapper fontMapper = new IdentityPlusMapper();
+    	wordMLPackage.setFontMapper(fontMapper);
+    	fontMapper.put("Calibri",PhysicalFonts.get("SimSun"));
+        FOSettings foSettings = Docx4J.createFOSettings();
+        foSettings.setWmlPackage(wordMLPackage);
+        Docx4J.toFO(foSettings, os, Docx4J.FLAG_EXPORT_PREFER_XSL);
+        IOUtils.closeQuietly(os);  
+    	
+    }  
+
+}

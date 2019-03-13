@@ -59,7 +59,7 @@ public class ExcelToPdfUtil {
     protected boolean setting = false;
     
     public static void main(String[] args) throws Exception {
-        FileInputStream in = new FileInputStream(new File("C:\\Users\\10063731\\Desktop\\cip\\CIP服务器说明-新增版.xlsx"));
+        FileInputStream in = new FileInputStream(new File("C:\\Users\\10063731\\Desktop\\cip\\CIP服务器清单v1.1 Add by lhy.xlsx"));
         FileOutputStream out = new FileOutputStream(new File("C:\\Users\\10063731\\Desktop\\cip\\99.pdf"));
         ExcelToPdfUtil pe = new ExcelToPdfUtil();
         pe.convert(in ,out);
@@ -87,7 +87,8 @@ public class ExcelToPdfUtil {
         }
         //将多个sheet的内容合并到一个pdf文件中
         for(int i=0; i<pdfTableList.size(); i++) {
-        	document.add(pdfTableList.get(i));
+        	PdfPTable pdfTable = pdfTableList.get(i);
+        	document.add(pdfTable);
         }
         document.close();
     }
@@ -105,7 +106,7 @@ public class ExcelToPdfUtil {
 		//获取该excel sheet的总行数
 		int rowlength = sheet.getLastRowNum();
         //遍历excel sheet页的每一行
-        for (int i = 0; i < rowlength; i++) {
+        for (int i = 0; i <= rowlength; i++) {
         	List<PdfPCell> cells = new ArrayList<PdfPCell>();
             Row row = sheet.getRow(i);
             if(row == null) {
@@ -190,12 +191,12 @@ public class ExcelToPdfUtil {
 	        //如果当前行小于最大长度，则新建一个空cell补充，防止错位
 	        if(width < maxWidth) {
 	        	PdfPCell pcell = new PdfPCell();
-	        	pcell.setBackgroundColor(cell.getBackgroundColor());
+//	        	pcell.setBackgroundColor(cell.getBackgroundColor());
 	        	pcell.setColspan(maxWidth - width);
 	        	pcell.setRowspan(rowSpan);
-	        	pcell.setVerticalAlignment(cell.getVerticalAlignment());
-	        	pcell.setHorizontalAlignment(cell.getHorizontalAlignment());
-	        	pcell.setFixedHeight(cell.getFixedHeight());
+//	        	pcell.setVerticalAlignment(cell.getVerticalAlignment());
+//	        	pcell.setHorizontalAlignment(cell.getHorizontalAlignment());
+//	        	pcell.setFixedHeight(cell.getFixedHeight());
 	        	table.addCell(pcell);
 	        }
 		}
