@@ -1,9 +1,10 @@
-package com.haoli.sdk.web.domain;
+package com.haoli.sdk.web.util.microSoftOffice;
 
 import java.awt.Dimension;
 import java.util.List;
 
 import org.apache.poi.hssf.usermodel.HSSFClientAnchor;
+import org.apache.poi.hssf.usermodel.HSSFPatriarch;
 import org.apache.poi.hssf.usermodel.HSSFPicture;
 import org.apache.poi.hssf.usermodel.HSSFShape;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
@@ -27,7 +28,11 @@ public class Excelmage {
         Sheet sheet = cell.getSheet();
         if (sheet instanceof HSSFSheet) {
             HSSFSheet hssfSheet = (HSSFSheet) sheet;
-            List<HSSFShape> shapes = hssfSheet.getDrawingPatriarch().getChildren();
+            HSSFPatriarch hSSFPatriarch=  hssfSheet.getDrawingPatriarch();
+            if(hSSFPatriarch == null) {
+            	return null;
+            }
+            List<HSSFShape> shapes = hSSFPatriarch.getChildren();
             for (HSSFShape shape : shapes) {
                 HSSFClientAnchor anchor = (HSSFClientAnchor) shape.getAnchor();
                 if (shape instanceof HSSFPicture) {

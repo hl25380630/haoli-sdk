@@ -32,7 +32,6 @@ import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.xssf.usermodel.XSSFColor;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
-import com.haoli.sdk.web.domain.Excelmage;
 import com.itextpdf.text.Anchor;
 import com.itextpdf.text.BadElementException;
 import com.itextpdf.text.BaseColor;
@@ -59,13 +58,15 @@ public class ExcelToPdfUtil {
     protected boolean setting = false;
     
     public static void main(String[] args) throws Exception {
-        FileInputStream in = new FileInputStream(new File("C:\\Users\\10063731\\Desktop\\cip\\CIP服务器清单v1.1 Add by lhy.xlsx"));
-        FileOutputStream out = new FileOutputStream(new File("C:\\Users\\10063731\\Desktop\\cip\\99.pdf"));
+        String source = "C:\\Users\\10063731\\Desktop\\cip\\CIPPRE环境消息提醒测试.xls";
+        String dest = "C:\\Users\\10063731\\Desktop\\cip\\999.pdf";
         ExcelToPdfUtil pe = new ExcelToPdfUtil();
-        pe.convert(in ,out);
+        pe.convert(source ,dest);
     }
     
-	public void convert(FileInputStream in, FileOutputStream out) throws Exception {
+	public void convert(String source, String dest) throws Exception {
+        FileInputStream in = new FileInputStream(new File(source));
+        FileOutputStream out = new FileOutputStream(new File(dest));
 		//使用itext新建pdf文件，设置为A4纸大小
         Document document = new Document();
         document.setPageSize(PageSize.A4.rotate());
@@ -213,6 +214,9 @@ public class ExcelToPdfUtil {
     
     protected void addImageByPOICell(PdfPCell pdfpCell , Cell cell , float cellWidth) throws BadElementException, MalformedURLException, IOException{
        Excelmage poiImage = new Excelmage().getCellImage(cell);
+       if(poiImage == null) {
+    	   return;
+       }
        byte[] bytes = poiImage.getBytes();
        if(bytes != null){
            pdfpCell.setVerticalAlignment(Element.ALIGN_MIDDLE);

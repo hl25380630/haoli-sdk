@@ -12,6 +12,14 @@ import org.docx4j.org.apache.poi.util.IOUtils;
 
 public class WordToPdfUtil {
 	
+	public static void main(String[] args) throws Exception {
+		Docx4J.pdfViaFO();
+		String source = "C:\\Users\\10063731\\Desktop\\cip\\cip审批流程技术培训文档.docx";
+		String dest = "C:\\Users\\10063731\\Desktop\\cip\\666.pdf";
+		WordToPdfUtil wp = new WordToPdfUtil();
+		wp.convertDocxToPDF(source, dest);
+	}
+	
 	
 	/**
 	 * word文档转换为pdf文档
