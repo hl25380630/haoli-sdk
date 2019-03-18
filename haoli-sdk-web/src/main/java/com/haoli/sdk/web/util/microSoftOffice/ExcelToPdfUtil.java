@@ -58,8 +58,8 @@ public class ExcelToPdfUtil {
     protected boolean setting = false;
     
     public static void main(String[] args) throws Exception {
-        String source = "C:\\Users\\10063731\\Desktop\\cip\\CIPPRE环境消息提醒测试.xls";
-        String dest = "C:\\Users\\10063731\\Desktop\\cip\\999.pdf";
+        String source = "C:\\Users\\10063731\\Desktop\\cip\\CIPPRE环境消息提醒测试.xlsx";
+        String dest = "C:\\Users\\10063731\\Desktop\\cip\\777.pdf";
         ExcelToPdfUtil pe = new ExcelToPdfUtil();
         pe.convert(source ,dest);
     }
