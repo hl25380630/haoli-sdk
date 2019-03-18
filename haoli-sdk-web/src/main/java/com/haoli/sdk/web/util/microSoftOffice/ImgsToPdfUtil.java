@@ -20,6 +20,10 @@ public class ImgsToPdfUtil {
     }
 
 	public void imgsToPdf(String imageFolderPath, String pdfPath) throws Exception{
+		File pdfFile = new File(pdfPath);
+		if(!pdfFile.exists()) {
+			new File(pdfFile.getParent()).mkdirs();
+		}
 		FileOutputStream fos = new FileOutputStream(pdfPath);
 		Document doc = new Document(null, 0, 0, 0, 0);
 		doc.open();

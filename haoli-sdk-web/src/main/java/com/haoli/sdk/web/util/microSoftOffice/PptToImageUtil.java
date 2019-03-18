@@ -35,11 +35,12 @@ public class PptToImageUtil {
         pe.pptxToImage(source ,dest);
     }
 	
-	public void pptToImage(String source, String dest) throws Exception {
+	public String pptToImage(String source, String dest) throws Exception {
 		FileInputStream is = new FileInputStream(new File(source));
 		SlideShow ppt = new SlideShow(is);
 		Dimension pgsize = ppt.getPageSize();
 		Slide[] slide = ppt.getSlides();
+		String finalPath = "";
 		for (int i = 0; i < slide.length; i++) {
             TextRun[] truns = slide[i].getTextRuns();
             for (int k = 0; k < truns.length; k++) {
@@ -54,20 +55,26 @@ public class PptToImageUtil {
             graphics.setPaint(Color.BLUE);
             graphics.fill(new Rectangle2D.Float(0, 0, pgsize.width, pgsize.height));
             slide[i].draw(graphics);
-            File path = new File(dest);
+            File sourceFile = new File(source);
+            String sourceFileName = sourceFile.getName();
+            String sourceFileNameNoSuffix = sourceFileName.substring(0, sourceFileName.lastIndexOf("."));
+            finalPath = dest + "/" + sourceFileNameNoSuffix;
+            File path = new File(finalPath);
             if (!path.exists()) {
-                path.mkdir();
+                path.mkdirs();
             }
-            FileOutputStream out = new FileOutputStream(path + "/" + (i + 1) + ".jpg");
+            FileOutputStream out = new FileOutputStream(path  + "/" + (i + 1) + ".jpg");
             ImageIO.write(img, "png", out);
             out.close();
         }
         System.out.println("success!!");
+		return finalPath;
 	}
 	
-	public void pptxToImage(String source, String dest) throws Exception {
+	public String pptxToImage(String source, String dest) throws Exception {
 		FileInputStream is = new FileInputStream(new File(source));
         XMLSlideShow xmlSlideShow = new XMLSlideShow(is);
+        String finalPath = "";
         is.close();
         // 获取大小
         Dimension pgsize = xmlSlideShow.getPageSize();
@@ -94,15 +101,20 @@ public class PptToImageUtil {
             graphics.setPaint(Color.white);
             graphics.fill(new Rectangle2D.Float(0, 0, pgsize.width,pgsize.height));
             slides[i].draw(graphics);
-            File path = new File(dest);
+            File sourceFile = new File(source);
+            String sourceFileName = sourceFile.getName();
+            String sourceFileNameNoSuffix = sourceFileName.substring(0, sourceFileName.lastIndexOf("."));
+            finalPath = dest + "/" + sourceFileNameNoSuffix;
+            File path = new File(finalPath);
             if (!path.exists()) {
-                path.mkdir();
+                path.mkdirs();
             }
             // 这里设置图片的存放路径和图片的格式(jpeg,png,bmp等等),注意生成文件路径
             FileOutputStream out = new FileOutputStream(path + "/" + (i + 1) + ".jpg");
             ImageIO.write(img, "png", out);
             out.close();
         }
+        return finalPath;
 	}
 	    
 
