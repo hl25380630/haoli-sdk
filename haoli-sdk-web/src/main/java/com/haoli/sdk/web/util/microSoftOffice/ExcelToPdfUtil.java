@@ -36,6 +36,7 @@ import com.itextpdf.text.Anchor;
 import com.itextpdf.text.BadElementException;
 import com.itextpdf.text.BaseColor;
 import com.itextpdf.text.Document;
+import com.itextpdf.text.DocumentException;
 import com.itextpdf.text.Element;
 import com.itextpdf.text.ExceptionConverter;
 import com.itextpdf.text.Font;
@@ -52,16 +53,27 @@ import com.itextpdf.text.pdf.PdfTemplate;
 import com.itextpdf.text.pdf.PdfWriter;
 
 public class ExcelToPdfUtil {
-	
-    String anchorName = "anchorName";
-
-    protected boolean setting = false;
     
     public static void main(String[] args) throws Exception {
         String source = "C:\\Users\\10063731\\Desktop\\cip\\CIPPRE环境消息提醒测试.xlsx";
         String dest = "C:\\Users\\10063731\\Desktop\\cip\\777.pdf";
-        ExcelToPdfUtil pe = new ExcelToPdfUtil();
-        pe.convert(source ,dest);
+        String fontPath = "C:\\Windows\\Fonts\\STSONG.TTF";
+        ExcelToPdfUtil pe = new ExcelToPdfUtil(fontPath);
+        pe.convert(source, dest);
+    }
+    
+    String anchorName = "anchorName";
+
+    String fontPath;
+    
+    protected boolean setting = false;
+    
+    public ExcelToPdfUtil() {
+    	
+    }
+    
+    public ExcelToPdfUtil(String fontPath) {
+    	this.fontPath = fontPath;
     }
     
 	public void convert(String source, String dest) throws Exception {
@@ -71,7 +83,7 @@ public class ExcelToPdfUtil {
         Document document = new Document();
         document.setPageSize(PageSize.A4.rotate());
         PdfWriter writer = PdfWriter.getInstance(document, out);
-        writer.setPageEvent(new PDFPageEvent());
+        writer.setPageEvent(new PDFPageEvent(fontPath));
         document.open();
         //获取想要转换成pdf的excel文件
         Workbook wb = WorkbookFactory.create(in);
@@ -192,12 +204,8 @@ public class ExcelToPdfUtil {
 	        //如果当前行小于最大长度，则新建一个空cell补充，防止错位
 	        if(width < maxWidth) {
 	        	PdfPCell pcell = new PdfPCell();
-//	        	pcell.setBackgroundColor(cell.getBackgroundColor());
 	        	pcell.setColspan(maxWidth - width);
 	        	pcell.setRowspan(rowSpan);
-//	        	pcell.setVerticalAlignment(cell.getVerticalAlignment());
-//	        	pcell.setHorizontalAlignment(cell.getHorizontalAlignment());
-//	        	pcell.setFixedHeight(cell.getFixedHeight());
 	        	table.addCell(pcell);
 	        }
 		}
@@ -205,7 +213,7 @@ public class ExcelToPdfUtil {
     }
     
     
-    protected Phrase getPhrase(Cell cell, Workbook wb){
+    protected Phrase getPhrase(Cell cell, Workbook wb) throws Exception{
         Anchor anchor = new Anchor(cell.getStringCellValue() , getFontByExcel(cell.getCellStyle(), wb));
         anchor.setName(anchorName);
         this.setting = true;
@@ -283,8 +291,9 @@ public class ExcelToPdfUtil {
         return result;
     }
 
-    protected Font getFontByExcel(CellStyle style, Workbook wb) {
-       Font result = new Font(Resource.BASE_FONT_CHINESE , 8 , Font.NORMAL);
+    protected Font getFontByExcel(CellStyle style, Workbook wb) throws Exception {
+       BaseFont baseFont = BaseFont.createFont(fontPath, BaseFont.IDENTITY_H,BaseFont.NOT_EMBEDDED);
+       Font result = new Font(baseFont , 8 , Font.NORMAL);
        //字体样式索引
        short index = style.getFontIndex();
        org.apache.poi.ss.usermodel.Font font = wb.getFontAt(index);
@@ -441,15 +450,25 @@ public class ExcelToPdfUtil {
     }
     
     
+    
     private static class PDFPageEvent extends PdfPageEventHelper{
+    	
         protected PdfTemplate template;
+        
         public BaseFont baseFont;
+        
+        public String fontPath;
+        
+        public PDFPageEvent(String fontPath) {
+        	this.fontPath = fontPath;
+        }
         
         @Override
         public void onStartPage(PdfWriter writer, Document document) {
             try{
                 this.template = writer.getDirectContent().createTemplate(100, 100);
-                this.baseFont = new Font(Resource.BASE_FONT_CHINESE , 8, Font.NORMAL).getBaseFont();
+                BaseFont baseFontChinese = BaseFont.createFont(this.fontPath, BaseFont.IDENTITY_H,BaseFont.NOT_EMBEDDED);
+                this.baseFont = new Font(baseFontChinese , 8, Font.NORMAL).getBaseFont();
             } catch(Exception e) {
                 throw new ExceptionConverter(e);
             }
