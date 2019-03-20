@@ -1,5 +1,6 @@
 package com.haoli.sdk.web.util.microSoftOffice;
 
+
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics2D;
@@ -28,11 +29,13 @@ import org.apache.poi.xslf.usermodel.XSLFTextShape;
  */
 public class PptToImageUtil {
 	
+	private static final int ZOOM = 8;
+	
     public static void main(String[] args) throws Exception {
-        String source = "C:\\Users\\10063731\\Desktop\\cip\\附件2：线上报到操作指南.pptx";
+        String source = "C:\\Users\\10063731\\Desktop\\cip\\附件2：线上报到操作指南.ppt";
         String dest = "C:\\Users\\10063731\\Desktop\\cip\\pptImg";
         PptToImageUtil pe = new PptToImageUtil();
-        pe.pptxToImage(source ,dest);
+        pe.pptToImage(source ,dest);
     }
 	
 	public String pptToImage(String source, String dest) throws Exception {
@@ -50,10 +53,11 @@ public class PptToImageUtil {
                     rtruns[l].setFontName("宋体");
                 }
             }
-            BufferedImage img = new BufferedImage(pgsize.width, pgsize.height,BufferedImage.TYPE_INT_RGB);
+            BufferedImage img = new BufferedImage(pgsize.width*ZOOM, pgsize.height*ZOOM, BufferedImage.TYPE_INT_RGB);
             Graphics2D graphics = img.createGraphics();
             graphics.setPaint(Color.BLUE);
-            graphics.fill(new Rectangle2D.Float(0, 0, pgsize.width, pgsize.height));
+            graphics.fill(new Rectangle2D.Float(0, 0, pgsize.width*ZOOM, pgsize.height*ZOOM));
+            graphics.scale(ZOOM, ZOOM);
             slide[i].draw(graphics);
             File sourceFile = new File(source);
             String sourceFileName = sourceFile.getName();
@@ -63,7 +67,7 @@ public class PptToImageUtil {
             if (!path.exists()) {
                 path.mkdirs();
             }
-            FileOutputStream out = new FileOutputStream(path  + "/" + (i + 1) + ".jpg");
+            FileOutputStream out = new FileOutputStream(path  + "/" + (i + 1) + ".png");
             ImageIO.write(img, "png", out);
             out.close();
         }
@@ -96,10 +100,11 @@ public class PptToImageUtil {
                 }
             }
             //根据幻灯片大小生成图片
-            BufferedImage img = new BufferedImage(pgsize.width,pgsize.height, BufferedImage.TYPE_INT_RGB);
+            BufferedImage img = new BufferedImage(pgsize.width*4, pgsize.height*4, BufferedImage.TYPE_INT_RGB);
             Graphics2D graphics = img.createGraphics();
             graphics.setPaint(Color.white);
-            graphics.fill(new Rectangle2D.Float(0, 0, pgsize.width,pgsize.height));
+            graphics.fill(new Rectangle2D.Float(0, 0, pgsize.width*4, pgsize.height*4));
+            graphics.scale(4, 4);
             slides[i].draw(graphics);
             File sourceFile = new File(source);
             String sourceFileName = sourceFile.getName();
@@ -117,6 +122,4 @@ public class PptToImageUtil {
         return finalPath;
 	}
 	    
-
-
 }
