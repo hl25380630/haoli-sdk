@@ -32,10 +32,10 @@ public class PptToImageUtil {
 	private static final int ZOOM = 8;
 	
     public static void main(String[] args) throws Exception {
-        String source = "C:\\Users\\10063731\\Desktop\\cip\\附件2：线上报到操作指南.ppt";
+        String source = "C:\\Users\\10063731\\Desktop\\cip\\omo.pptx";
         String dest = "C:\\Users\\10063731\\Desktop\\cip\\pptImg";
         PptToImageUtil pe = new PptToImageUtil();
-        pe.pptToImage(source ,dest);
+        pe.pptxToImage(source ,dest);
     }
 	
 	public String pptToImage(String source, String dest) throws Exception {
