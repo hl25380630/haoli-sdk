@@ -53,13 +53,33 @@ import com.itextpdf.text.pdf.PdfTemplate;
 import com.itextpdf.text.pdf.PdfWriter;
 
 public class ExcelToPdfUtil {
+	
+	public void excel2Pdf(String excelPath, String pdfPath) throws Exception {
+		long old = System.currentTimeMillis();
+		// 验证License
+//		this.getLicense();
+		FileInputStream fileInputStream = null;
+		FileOutputStream fileOutputStream = null;
+		File excelFile = new File(excelPath);
+		if (excelFile.exists()) {
+			fileInputStream = new FileInputStream(excelFile);
+			com.aspose.cells.Workbook workbook = new com.aspose.cells.Workbook(fileInputStream);
+			File pdfFile = new File(pdfPath);
+			fileOutputStream = new FileOutputStream(pdfFile);
+			workbook.save(pdfPath);
+			long now = System.currentTimeMillis();
+			System.out.println("共耗时：" + ((now - old) / 1000.0) + "秒\n\n" + "文件保存在:" + pdfFile.getPath());
+		} else {
+			System.out.println("文件不存在");
+		}
+	}
     
     public static void main(String[] args) throws Exception {
-        String source = "C:\\Users\\10063731\\Desktop\\cip\\CIPPRE环境消息提醒测试.xlsx";
-        String dest = "C:\\Users\\10063731\\Desktop\\cip\\777.pdf";
+        String source = "C:\\Users\\10063731\\Desktop\\cip\\test file\\excel\\CIPPRE环境消息提醒测试.xlsx";
+        String dest = "C:\\Users\\10063731\\Desktop\\cip\\convertedFile\\CIPPRE环境消息提醒测试.pdf";
         String fontPath = "C:\\Windows\\Fonts\\STSONG.TTF";
         ExcelToPdfUtil pe = new ExcelToPdfUtil(fontPath);
-        pe.convert(source, dest);
+        pe.excel2Pdf(source, dest);
     }
     
     String anchorName = "anchorName";
