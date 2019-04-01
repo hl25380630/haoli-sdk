@@ -75,7 +75,7 @@ public class ExcelToPdfUtil {
 	}
     
     public static void main(String[] args) throws Exception {
-        String source = "C:\\Users\\10063731\\Desktop\\cip\\test file\\excel\\CIPPRE环境消息提醒测试.xlsx";
+        String source = "C:\\Users\\10063731\\Desktop\\cip\\test file\\excel\\OMO线上平台待办事项汇总.xls";
         String dest = "C:\\Users\\10063731\\Desktop\\cip\\convertedFile\\CIPPRE环境消息提醒测试.pdf";
         String fontPath = "C:\\Windows\\Fonts\\STSONG.TTF";
         ExcelToPdfUtil pe = new ExcelToPdfUtil(fontPath);
