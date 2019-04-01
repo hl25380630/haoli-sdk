@@ -29,16 +29,16 @@ import org.apache.poi.xslf.usermodel.XSLFTextShape;
  */
 public class PptToImageUtil {
 	
-	private static final int ZOOM = 8;
+	private static final int ZOOM = 2;
 	
     public static void main(String[] args) throws Exception {
-        String source = "C:\\Users\\10063731\\Desktop\\cip\\omo.pptx";
-        String dest = "C:\\Users\\10063731\\Desktop\\cip\\pptImg";
+        String source = "C:\\Users\\10063731\\Desktop\\cip\\test file\\附件2 ERP SD系统操作演练_20190327.ppt";
+        String dest = "C:\\Users\\10063731\\Desktop\\cip\\test file\\pptImg";
         PptToImageUtil pe = new PptToImageUtil();
-        pe.pptxToImage(source ,dest);
+        pe.pptToImage(source ,dest);
     }
 	
-	public String pptToImage(String source, String dest) throws Exception {
+    public String pptToImage(String source, String dest) throws Exception {
 		FileInputStream is = new FileInputStream(new File(source));
 		SlideShow ppt = new SlideShow(is);
 		Dimension pgsize = ppt.getPageSize();
@@ -77,7 +77,7 @@ public class PptToImageUtil {
 	
 	public String pptxToImage(String source, String dest) throws Exception {
 		FileInputStream is = new FileInputStream(new File(source));
-        XMLSlideShow xmlSlideShow = new XMLSlideShow(is);
+		XMLSlideShow xmlSlideShow = new XMLSlideShow(is);
         String finalPath = "";
         is.close();
         // 获取大小
@@ -86,7 +86,7 @@ public class PptToImageUtil {
         XSLFSlide[] slides = xmlSlideShow.getSlides();
         for (int i = 0 ; i < slides.length ; i++) {
             // 解决乱码问题
-            XSLFShape[] shapes = slides[i].getShapes();
+        	XSLFShape[] shapes = slides[i].getShapes();
             for (XSLFShape shape : shapes) {
                 if (shape instanceof XSLFTextShape) {
                     XSLFTextShape sh = (XSLFTextShape) shape;
@@ -100,11 +100,11 @@ public class PptToImageUtil {
                 }
             }
             //根据幻灯片大小生成图片
-            BufferedImage img = new BufferedImage(pgsize.width*4, pgsize.height*4, BufferedImage.TYPE_INT_RGB);
+            BufferedImage img = new BufferedImage(pgsize.width*ZOOM, pgsize.height*ZOOM, BufferedImage.TYPE_INT_RGB);
             Graphics2D graphics = img.createGraphics();
             graphics.setPaint(Color.white);
-            graphics.fill(new Rectangle2D.Float(0, 0, pgsize.width*4, pgsize.height*4));
-            graphics.scale(4, 4);
+            graphics.fill(new Rectangle2D.Float(0, 0, pgsize.width*ZOOM, pgsize.height*ZOOM));
+            graphics.scale(ZOOM, ZOOM);
             slides[i].draw(graphics);
             File sourceFile = new File(source);
             String sourceFileName = sourceFile.getName();
@@ -115,11 +115,13 @@ public class PptToImageUtil {
                 path.mkdirs();
             }
             // 这里设置图片的存放路径和图片的格式(jpeg,png,bmp等等),注意生成文件路径
-            FileOutputStream out = new FileOutputStream(path + "/" + (i + 1) + ".jpg");
+            FileOutputStream out = new FileOutputStream(path+( "/" + (i + 1) + ".jpg"));
             ImageIO.write(img, "png", out);
             out.close();
         }
+        System.out.println("success!!");
         return finalPath;
 	}
-	    
+
+
 }

@@ -1,6 +1,5 @@
 package com.haoli.sdk.web.util.microSoftOffice;
 
-
 import java.awt.Dimension;
 import java.util.List;
 

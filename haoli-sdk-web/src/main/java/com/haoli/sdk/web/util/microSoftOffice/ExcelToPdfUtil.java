@@ -36,7 +36,6 @@ import com.itextpdf.text.Anchor;
 import com.itextpdf.text.BadElementException;
 import com.itextpdf.text.BaseColor;
 import com.itextpdf.text.Document;
-import com.itextpdf.text.DocumentException;
 import com.itextpdf.text.Element;
 import com.itextpdf.text.ExceptionConverter;
 import com.itextpdf.text.Font;
@@ -54,36 +53,19 @@ import com.itextpdf.text.pdf.PdfWriter;
 
 public class ExcelToPdfUtil {
 	
-	public void excel2Pdf(String excelPath, String pdfPath) throws Exception {
-		long old = System.currentTimeMillis();
-		// 验证License
-//		this.getLicense();
-		FileInputStream fileInputStream = null;
-		FileOutputStream fileOutputStream = null;
-		File excelFile = new File(excelPath);
-		if (excelFile.exists()) {
-			fileInputStream = new FileInputStream(excelFile);
-			com.aspose.cells.Workbook workbook = new com.aspose.cells.Workbook(fileInputStream);
-			File pdfFile = new File(pdfPath);
-			fileOutputStream = new FileOutputStream(pdfFile);
-			workbook.save(pdfPath);
-			long now = System.currentTimeMillis();
-			System.out.println("共耗时：" + ((now - old) / 1000.0) + "秒\n\n" + "文件保存在:" + pdfFile.getPath());
-		} else {
-			System.out.println("文件不存在");
-		}
-	}
-    
     public static void main(String[] args) throws Exception {
-        String source = "C:\\Users\\10063731\\Desktop\\cip\\test file\\excel\\OMO线上平台待办事项汇总.xls";
-        String dest = "C:\\Users\\10063731\\Desktop\\cip\\convertedFile\\CIPPRE环境消息提醒测试.pdf";
+        String source = "C:\\Users\\10063731\\Desktop\\cip\\test file\\ppt\\多页ppt111.pptx";
+        String dest = "C:\\Users\\10063731\\Desktop\\cip\\convertedFile\\多页ppt111.pdf";
         String fontPath = "C:\\Windows\\Fonts\\STSONG.TTF";
         ExcelToPdfUtil pe = new ExcelToPdfUtil(fontPath);
-        pe.excel2Pdf(source, dest);
+        pe.convert(source, dest);
     }
+    
     
     String anchorName = "anchorName";
 
+    BaseFont baseFont;
+    
     String fontPath;
     
     protected boolean setting = false;
@@ -94,6 +76,10 @@ public class ExcelToPdfUtil {
     
     public ExcelToPdfUtil(String fontPath) {
     	this.fontPath = fontPath;
+    }
+    
+    public ExcelToPdfUtil(BaseFont baseFont) {
+    	this.baseFont = baseFont;
     }
     
 	public void convert(String source, String dest) throws Exception {
@@ -148,6 +134,9 @@ public class ExcelToPdfUtil {
             int rowIndex = row.getRowNum();
             //获取该行一共有多少列
             int columNo = row.getLastCellNum();
+            if(columNo <= 0) {
+            	continue;
+            }
             //创建每一列的宽度信息存储数组
             float[] columnWidthArray = new float[columNo];
             //遍历每一列

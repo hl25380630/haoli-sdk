@@ -13,13 +13,16 @@ import org.docx4j.org.apache.poi.util.IOUtils;
 public class WordToPdfUtil {
 	
 	public static void main(String[] args) throws Exception {
-//		Docx4J.pdfViaFO();
-		String source = "C:\\Users\\10063731\\Desktop\\cip\\CMP用户手册v2.0.docx";
+		String source = "C:\\Users\\10063731\\Desktop\\cip\\cip审批流程技术培训文档.docx";
 		String dest = "C:\\Users\\10063731\\Desktop\\cip\\666.pdf";
 		WordToPdfUtil wp = new WordToPdfUtil();
-		wp.convertDocxToPDF(source, dest);
+		wp.wordToPDF(source, dest);
 	}
 	
+	public void wordToPDF(String source, String dest) throws Exception {
+	  	com.aspose.words.Document doc = new com.aspose.words.Document(source);
+        doc.save(dest);
+	}
 	
 	/**
 	 * word文档转换为pdf文档
@@ -34,6 +37,7 @@ public class WordToPdfUtil {
     	fontMapper.put("Calibri",PhysicalFonts.get("STSong"));
     	fontMapper.put("Times-Roman",PhysicalFonts.get("STSong"));
     	fontMapper.put("Times-Bold",PhysicalFonts.get("STSong"));
+    	fontMapper.put("华文宋体",PhysicalFonts.get("STSong"));
         FOSettings foSettings = Docx4J.createFOSettings();
         foSettings.setWmlPackage(wordMLPackage);
         Docx4J.toFO(foSettings, os, Docx4J.FLAG_EXPORT_PREFER_XSL);
@@ -42,4 +46,3 @@ public class WordToPdfUtil {
     }  
 
 }
-

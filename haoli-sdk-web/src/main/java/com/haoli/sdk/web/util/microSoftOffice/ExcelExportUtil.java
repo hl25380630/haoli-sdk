@@ -1,5 +1,6 @@
 package com.haoli.sdk.web.util.microSoftOffice;
 
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -20,7 +21,7 @@ import com.haoli.sdk.web.util.MapUtil;
  * 不然this.getClass().getResourceAsStream无法生效
  * @author 李昊
  */
-public class ExcelUtil {
+public class ExcelExportUtil {
 	
 	/**
 	 * 用于根据指定的模板导出excel表，可以添加自定义的函数功能，
@@ -35,7 +36,7 @@ public class ExcelUtil {
 		Transformer transformer  = jxlsHelper.createTransformer(templateStream, os);
 		JexlExpressionEvaluator evaluator = (JexlExpressionEvaluator)transformer.getTransformationConfig().getExpressionEvaluator();
 		Map<String, Object> funcs = new HashMap<String, Object>();
-		funcs.put("utils", new ExcelUtil());    //添加自定义功能
+		funcs.put("utils", new ExcelExportUtil());    //添加自定义功能
         evaluator.getJexlEngine().setFunctions(funcs);
         jxlsHelper.processTemplate(context, transformer);
 	}
