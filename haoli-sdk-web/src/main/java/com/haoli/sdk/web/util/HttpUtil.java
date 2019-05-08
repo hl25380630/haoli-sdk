@@ -10,6 +10,7 @@ import java.util.Map;
 
 import com.alibaba.fastjson.JSONObject;
 
+
 /**
  * http 请求工具类，基于java原生包实现
  * @author 李昊
@@ -69,8 +70,9 @@ public class HttpUtil {
 			response = responseSb.toString();
 	    }
 	    br.close();
+	    String cookie = con.getHeaderField("Set-Cookie");
 	    con.disconnect();
-	    HttpResponse httpResponse = new HttpResponse(responseCode,response);
+	    HttpResponse httpResponse = new HttpResponse(responseCode,response, cookie);
 		return httpResponse;
 	}
 	
@@ -109,8 +111,9 @@ public class HttpUtil {
 	    }
 	    outputStreamWriter.close();
 	    br.close();
+	    String cookie = con.getHeaderField("Set-Cookie");
 	    con.disconnect();
-	    HttpResponse httpResponse = new HttpResponse(responseCode,response);
+	    HttpResponse httpResponse = new HttpResponse(responseCode,response, cookie);
 		return httpResponse;
 	}
 	
@@ -161,11 +164,57 @@ public class HttpUtil {
 	    }
 	    outputStreamWriter.close();
 	    br.close();
+	    String cookie = con.getHeaderField("Set-Cookie");
 	    con.disconnect();
-	    HttpResponse httpResponse = new HttpResponse(responseCode,response);
+	    HttpResponse httpResponse = new HttpResponse(responseCode,response, cookie);
 		return httpResponse;
 	}
 	
+	public static HttpResponse postFormData(String url, Map<String, Object> params) throws Exception {
+		URL urlObj = new URL(url);
+		HttpURLConnection con = (HttpURLConnection) urlObj.openConnection();
+		con.setDoOutput(true);
+		con.setDoInput(true);
+		con.setRequestMethod(REQUEST_METHOD_POST); 
+		con.setConnectTimeout(CONNECT_TIME_OUT);
+		con.setReadTimeout(READ_TIME_OUT);
+		con.connect();
+		StringBuilder postParamBuilder = new StringBuilder();
+		OutputStreamWriter outputStreamWriter = new OutputStreamWriter(con.getOutputStream());
+		if(params != null && !params.isEmpty()) {
+			for (Map.Entry<String, Object> entry : params.entrySet()) {
+				if(entry.getValue() == null) {
+					continue;
+				}
+				String value = URLEncoder.encode(String.valueOf(entry.getValue()), "UTF-8");
+				postParamBuilder.append(String.valueOf(entry.getKey())).append("=").append(value).append("&");
+			}
+			postParamBuilder.deleteCharAt(postParamBuilder.length() - 1);
+		}
+		String postParam = postParamBuilder.toString();
+		outputStreamWriter.write(postParam);
+		outputStreamWriter.flush();
+		BufferedReader br = new BufferedReader(new InputStreamReader(con.getInputStream(), "utf-8"));
+		StringBuilder sb = new StringBuilder();  
+	    String response = null;
+	    int responseCode = con.getResponseCode();
+	    if(responseCode >=200 && responseCode <300) {
+		    String line = null;
+		    while ((line = br.readLine()) != null) {  
+		        sb.append(line + "\n");  
+		    }
+		    response = sb.toString();
+			br.close();
+	    }else {
+			response = sb.toString();
+	    }
+	    outputStreamWriter.close();
+	    br.close();
+	    String cookie = con.getHeaderField("Set-Cookie");
+	    con.disconnect();
+	    HttpResponse httpResponse = new HttpResponse(responseCode,response, cookie);
+		return httpResponse;
+	}
 	
 	public static class HttpResponse {
 		
@@ -173,9 +222,25 @@ public class HttpUtil {
 		
 		private String body;
 		
+		private String cookie;
+		
+		public String getCookie() {
+			return cookie;
+		}
+
+		public void setCookie(String cookie) {
+			this.cookie = cookie;
+		}
+
 		public HttpResponse(int statusCode, String body){
 			this.statusCode = statusCode;
 			this.body = body;
+		}
+		
+		public HttpResponse(int statusCode, String body, String cookie){
+			this.statusCode = statusCode;
+			this.body = body;
+			this.cookie = cookie;
 		}
 
 		public int getStatusCode() {
