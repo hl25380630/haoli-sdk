@@ -51,6 +51,18 @@ public class TimeUtil {
     	}
         return new Date(Long.valueOf(timeStamp+"000"));  
     } 
+    
+    /**
+     * 讲sqlite的时间戳转换为正常的java Date类
+     */
+    public static Date sqliteTimeStampToDate(String sqliteTimeStamp) {
+    	if(sqliteTimeStamp == null || "".equals(sqliteTimeStamp) || "0".equals(sqliteTimeStamp)) {
+    		return null;
+    	}
+    	Long  sqliteTimeStampLong = Long.valueOf(sqliteTimeStamp);
+    	String unixTimeStamp10digits = String.valueOf(sqliteTimeStampLong/1000000 - 11644473600L);
+    	return new Date(Long.valueOf(unixTimeStamp10digits+"000"));  
+    }
 
     
 }
