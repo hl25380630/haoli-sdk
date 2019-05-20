@@ -4,18 +4,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 public class TimeUtil {
-	
-	public static void main(String[] args) throws ParseException{
-		TimeUtil tu = new TimeUtil();
-		String date = tu.timeStamp2Date("1540117525");
-		System.out.println(date);
-		String start = "2018-09-01 00:00:00";
-		String end = "2018-09-13 11:59:00";
-		System.out.println(tu.Date2timeStamp(start));
-		System.out.println(tu.Date2timeStamp(end));
 
-	}
-	
 	public String getCurrentTimestamp() {
 		Date date = new Date();
 	    String timestamp = String.valueOf(date.getTime()/1000);  
@@ -29,21 +18,39 @@ public class TimeUtil {
         return dateNowStr;
 	}
 	
-    public String timeStamp2Date(String timeStamp) {  
-        String format = "yyyy-MM-dd HH:mm:ss";  
-        SimpleDateFormat sdf = new SimpleDateFormat(format);  
-        return sdf.format(new Date(Long.valueOf(timeStamp+"000")));  
-    } 
-    
+	public static String dateToTime(Date date) {
+       SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");  
+       String dateNowStr = sdf.format(date);  
+       return dateNowStr;
+	}
+	
     public Date timeStampToDate(String timeStamp) {  
         return new Date(Long.valueOf(timeStamp));  
     } 
     
-    public String Date2timeStamp(String time) throws ParseException {
-        SimpleDateFormat format =  new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");  
-        Date date = format.parse(time);
-        String result = String.valueOf(date.getTime());
-        return result.substring(0, result.length()-3);  
-    }
+    public static String timeStampToSimpleDate(String timeStamp) throws ParseException {  
+    	SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMddHHmmssSSS");  
+    	Date date = sdf.parse(timeStamp);
+    	SimpleDateFormat sdf2 = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");  
+    	String s = sdf2.format(date);
+        return s;  
+    } 
+    
+    public static String timeStamp10ToSimpleDateFormat(String timeStamp) {
+        String format = "yyyy-MM-dd HH:mm:ss";  
+        SimpleDateFormat sdf = new SimpleDateFormat(format);  
+        if(timeStamp == null) {
+        	return null;
+        }
+        return sdf.format(new Date(Long.valueOf(timeStamp+"000")));  
+    } 
+    
+    public static Date timeStamp10ToDate(String timeStamp) { 
+    	if(timeStamp == null) {
+    		return null;
+    	}
+        return new Date(Long.valueOf(timeStamp+"000"));  
+    } 
 
+    
 }
