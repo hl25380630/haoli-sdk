@@ -24,15 +24,20 @@ import com.haoli.sdk.web.domain.RSAKey;
 public class RsaUtil {
 	
 	public static void main(String[] args) throws Exception {
-		String p ="C:\\Users\\10063731\\Desktop\\personal\\development\\rsa\\rsaKey.json";
-		String s = FileUtil.readFile(p);
-		JSONObject jobj = JSONObject.parseObject(s);
-		String privateKey = jobj.getString("RsaPrivateKey");
-		String publicKey = jobj.getString("RsaPublicKey");
-		String str = RsaUtil.encrypt("Li134679258!", publicKey);
-		System.out.println(str);
-		String destr = RsaUtil.decrypt(str, privateKey);
-		System.out.println(destr);
+//		String p ="C:\\Users\\10063731\\Desktop\\personal\\development\\rsa\\rsaKey.json";
+//		String s = FileUtil.readFile(p);
+//		JSONObject jobj = JSONObject.parseObject(s);
+//		String privateKey = jobj.getString("RsaPrivateKey");
+//		String publicKey = jobj.getString("RsaPublicKey");
+//		String str = RsaUtil.encrypt("Li134679258!", publicKey);
+//		System.out.println(str);
+//		String destr = RsaUtil.decrypt(str, privateKey);
+//		System.out.println(destr);
+		RSAKey key = RsaUtil.genKeyPair();
+		
+		System.out.println(key.getPublicKey());
+		System.out.println(key.getPrivateKeyString());
+		
 	}
 	
 
