@@ -14,7 +14,6 @@ import javax.crypto.Cipher;
 
 import org.apache.commons.codec.binary.Base64;
 
-import com.alibaba.fastjson.JSONObject;
 import com.haoli.sdk.web.domain.RSAKey;
 
 /**
@@ -24,23 +23,14 @@ import com.haoli.sdk.web.domain.RSAKey;
 public class RsaUtil {
 	
 	public static void main(String[] args) throws Exception {
-//		String p ="C:\\Users\\10063731\\Desktop\\personal\\development\\rsa\\rsaKey.json";
-//		String s = FileUtil.readFile(p);
-//		JSONObject jobj = JSONObject.parseObject(s);
-//		String privateKey = jobj.getString("RsaPrivateKey");
-//		String publicKey = jobj.getString("RsaPublicKey");
-//		String str = RsaUtil.encrypt("Li134679258!", publicKey);
-//		System.out.println(str);
-//		String destr = RsaUtil.decrypt(str, privateKey);
-//		System.out.println(destr);
 		RSAKey key = RsaUtil.genKeyPair();
-		
-		System.out.println(key.getPublicKey());
-		System.out.println(key.getPrivateKeyString());
-		
+		String publicKey = "MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQCbarV1MfgcbQiy6FoPbZnmwxc/WkvRmG7nna3ULR6R/vHv2gW8OvllDwtw+ymAkLKhgvjEigFacs1E3tmV10RvVj/Elu+xeQAJSjYa0PMGh9v0n8GTlomYKSHf2l6mYXtc498Oa2pFgGIYBmB+l0ZRnuFufBHGdFGmWvyBfmPaLQIDAQAB";
+		String s = RsaUtil.encrypt("Li25380630!", publicKey);
+//		System.out.println(key.getPublicKeyString());
+//		System.out.println(key.getPublicKeyString());
+		System.out.println(s);
 	}
 	
-
 	public static RSAKey genKeyPair() throws NoSuchAlgorithmException {
 		KeyPairGenerator keyPairGen = KeyPairGenerator.getInstance("RSA");
 		keyPairGen.initialize(1024, new SecureRandom());
@@ -51,7 +41,7 @@ public class RsaUtil {
 		String privateKeyString = new String(Base64.encodeBase64(privateKey.getEncoded()));
 		return new RSAKey(privateKey, privateKeyString, publicKey, publicKeyString);
 	}
-
+	
 	public static String encrypt(String source, String publicKey) throws Exception {
 		byte[] decoded = Base64.decodeBase64(publicKey);
 		RSAPublicKey pubKey = (RSAPublicKey) KeyFactory.getInstance("RSA")
