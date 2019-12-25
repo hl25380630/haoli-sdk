@@ -4,9 +4,13 @@ import java.security.interfaces.RSAPrivateKey;
 import java.security.interfaces.RSAPublicKey;
 
 public class RSAKey {
+	
 	private RSAPrivateKey privateKey;
+	
 	private String privateKeyString;
+	
 	private RSAPublicKey publicKey;
+	
 	public String publicKeyString;
 
 	public RSAKey() {
@@ -20,7 +24,7 @@ public class RSAKey {
 	}
 
 	public RSAPrivateKey getPrivateKey() {
-		return this.privateKey;
+		return privateKey;
 	}
 
 	public void setPrivateKey(RSAPrivateKey privateKey) {
@@ -28,7 +32,7 @@ public class RSAKey {
 	}
 
 	public String getPrivateKeyString() {
-		return this.privateKeyString;
+		return privateKeyString;
 	}
 
 	public void setPrivateKeyString(String privateKeyString) {
@@ -36,7 +40,7 @@ public class RSAKey {
 	}
 
 	public RSAPublicKey getPublicKey() {
-		return this.publicKey;
+		return publicKey;
 	}
 
 	public void setPublicKey(RSAPublicKey publicKey) {
@@ -44,10 +48,12 @@ public class RSAKey {
 	}
 
 	public String getPublicKeyString() {
-		return this.publicKeyString;
+		return publicKeyString;
 	}
 
 	public void setPublicKeyString(String publicKeyString) {
 		this.publicKeyString = publicKeyString;
 	}
+
+	
 }
