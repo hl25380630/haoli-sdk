@@ -18,7 +18,7 @@ public class AesSupport {
 
 	private Cipher encryptCipher;
 	
-	public void afterPropertiesSet() throws Exception{
+	public AesSupport() throws Exception{
 		decryptCipher = Cipher.getInstance(KEY_ALGORITHM);
 		decryptCipher.init(Cipher.DECRYPT_MODE, getSecretKey(SECRET));
 		encryptCipher = Cipher.getInstance(KEY_ALGORITHM);

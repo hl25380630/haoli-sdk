@@ -25,7 +25,7 @@ public class RsaUtil {
 	public static void main(String[] args) throws Exception {
 		RSAKey key = RsaUtil.genKeyPair();
 		String publicKey = "MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQCbarV1MfgcbQiy6FoPbZnmwxc/WkvRmG7nna3ULR6R/vHv2gW8OvllDwtw+ymAkLKhgvjEigFacs1E3tmV10RvVj/Elu+xeQAJSjYa0PMGh9v0n8GTlomYKSHf2l6mYXtc498Oa2pFgGIYBmB+l0ZRnuFufBHGdFGmWvyBfmPaLQIDAQAB";
-		String s = RsaUtil.encrypt("Li25380630!", publicKey);
+		String s = RsaUtil.encrypt("123456", publicKey);
 //		System.out.println(key.getPublicKeyString());
 //		System.out.println(key.getPublicKeyString());
 		System.out.println(s);
