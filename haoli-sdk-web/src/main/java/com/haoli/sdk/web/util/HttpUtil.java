@@ -72,7 +72,7 @@ public class HttpUtil {
 	    br.close();
 	    String cookie = con.getHeaderField("Set-Cookie");
 	    con.disconnect();
-	    HttpResponse httpResponse = new HttpResponse(responseCode,response, cookie);
+	    HttpResponse httpResponse = new HttpResponse(responseCode, response, cookie);
 		return httpResponse;
 	}
 	
